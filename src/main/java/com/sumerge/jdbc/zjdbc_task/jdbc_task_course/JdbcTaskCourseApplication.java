@@ -28,6 +28,9 @@ public class JdbcTaskCourseApplication {
 			Course retrieved = courseService.viewCourse(1);
 			System.out.println(retrieved);
 
+			Course retrieved_II = courseService.viewCourse(7);
+			System.out.println(retrieved_II);
+
 			courseService.deleteCourse(1);
 		};
 	}

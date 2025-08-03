@@ -2,6 +2,7 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -32,14 +33,18 @@ public class CourseService {
         String sql = "SELECT * FROM Course WHERE id = ?";
         RowMapper<Course> mapper = (rs, rowNum) -> {
             Course hold = new Course();
-            hold.setId(rs.getInt("id"));
-            hold.setName(rs.getString("name"));
-            hold.setDescription(rs.getString("description"));
-            hold.setCredit(rs.getInt("credit"));
-            hold.setAuthor_id(rs.getInt("author_id"));
+            hold.setId(rs.getInt(1));
+            hold.setName(rs.getString(2));
+            hold.setDescription(rs.getString(3));
+            hold.setCredit(rs.getInt(4));
+            hold.setAuthor_id(rs.getInt(5));
             return hold;
         };
-        return template.queryForObject(sql, mapper, courseId);
+        try {
+            return template.queryForObject(sql, mapper, courseId);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public void deleteCourse(int courseId) {
