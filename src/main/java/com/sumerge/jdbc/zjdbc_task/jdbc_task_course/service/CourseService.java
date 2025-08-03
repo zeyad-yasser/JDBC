@@ -1,45 +1,56 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 @Service
 public class CourseService {
-    private JdbcTemplate template;
+
+    private final JdbcTemplate template;
+
+    @Autowired
+    public CourseService(JdbcTemplate template) {
+        this.template = template;
+    }
 
     public void addCourse(Course course) {
-        String sql = "Insert into Course (id, name, description, credit, author_id) values (?,?,?,?,?)";
+        String sql = "INSERT INTO Course (id, name, description, credit, author_id) VALUES (?, ?, ?, ?, ?)";
         template.update(sql, course.getId(), course.getName(), course.getDescription(), course.getCredit(), course.getAuthor_id());
     }
-    public void updateCourse(Course course){
-        String sql = "Update Course SET name = ?, description = ?, credit = ?, author_id =? Where id = ?";
-        template.update(sql);
-    }
-    public Course viewCourse(int courseId){
-        String sql = "Select * from Course Where id = ?";
-        RowMapper<Course> mapper = new RowMapper<Course>() {
-            @Override
-            public Course mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Course hold = new Course();
-                hold.setId(rs.getInt("id"));
-                hold.setName(rs.getString("name"));
-                hold.setDescription(rs.getString("description"));
-                hold.setCredit(rs.getInt("credit"));
-                hold.setAuthor_id(rs.getInt("author_id"));
-                return hold;
-            }
-        };
-        return template.queryForObject(sql,mapper,courseId);
+
+    public void updateCourse(Course course) {
+        String sql = "UPDATE Course SET name = ?, description = ?, credit = ?, author_id = ? WHERE id = ?";
+        template.update(sql, course.getName(), course.getDescription(), course.getCredit(), course.getAuthor_id(), course.getId());
     }
 
-    public void deleteCourse(int courseId )
-    {
-     String sql = "Delete from Course Where id =?" ;
-     template.update(sql,courseId);
+    public Course viewCourse(int courseId) {
+        String sql = "SELECT * FROM Course WHERE id = ?";
+        RowMapper<Course> mapper = (rs, rowNum) -> {
+            Course hold = new Course();
+            hold.setId(rs.getInt("id"));
+            hold.setName(rs.getString("name"));
+            hold.setDescription(rs.getString("description"));
+            hold.setCredit(rs.getInt("credit"));
+            hold.setAuthor_id(rs.getInt("author_id"));
+            return hold;
+        };
+        return template.queryForObject(sql, mapper, courseId);
     }
+
+    public void deleteCourse(int courseId) {
+        String deleteRatings = "DELETE FROM Rating WHERE course_id = ?";
+        template.update(deleteRatings, courseId);
+
+        String deleteAssessments = "DELETE FROM Assessment WHERE course_id = ?";
+        template.update(deleteAssessments, courseId);
+
+        String deleteCourse = "DELETE FROM Course WHERE id = ?";
+        template.update(deleteCourse, courseId);
+    }
+
 }

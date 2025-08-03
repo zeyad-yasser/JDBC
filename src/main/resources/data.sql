@@ -13,8 +13,8 @@ INSERT INTO Rating (id, number, course_id) VALUES
        (1, 5, 1),
        (2, 4, 1),
        (3, 5, 2),
-       (4, 3, 3),
-       (5, 4, 4);
+       (4, 3, 3);
+
 
 INSERT INTO Assessment (id, content, course_id) VALUES
       (1, 'Final Exam - Java Basics', 1),

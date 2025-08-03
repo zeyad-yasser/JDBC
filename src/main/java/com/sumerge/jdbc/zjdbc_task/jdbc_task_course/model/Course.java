@@ -1,7 +1,11 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model;
 
-import javax.swing.plaf.SplitPaneUI;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.swing.plaf.SplitPaneUI;
+@Component
+@Scope("prototype")
 public class Course {
     int id;
     String name;
@@ -9,8 +13,12 @@ public class Course {
     int credit;
     int author_id;
 
-    public Course(int i, String javaProgramming, String learnJavaFromScratch, int i1, int i2) {
-
+    public Course(int id, String name, String description, int credit, int author_id) {
+        this.id=id;
+        this.name = name;
+        this.description= description;
+        this.credit= credit;
+        this.author_id = author_id;
     }
 
     public  Course(){}
