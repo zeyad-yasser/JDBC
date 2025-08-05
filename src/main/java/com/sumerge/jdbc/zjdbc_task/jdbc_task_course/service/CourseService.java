@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+
 @Service
 public class CourseService {
 
@@ -58,4 +60,28 @@ public class CourseService {
         template.update(deleteCourse, courseId);
     }
 
+    public List<Course> getRecommendedCourses() {
+        String sql= """
+                SELECT c.id, c.name, c.description, c.credit, c.author_id
+                FROM Course c
+                JOIN Rating r ON c.id = r.course_id
+                GROUP BY c.id, c.name, c.description, c.credit, c.author_id
+                ORDER BY AVG(r.rating_value) DESC 
+                LIMIT 5 
+                """;
+
+        return template.query(sql, new RowMapper<Course>() {
+            @Override
+            public Course mapRow(ResultSet rs, int rowNum) throws SQLException {
+               Course course = new Course();
+               course.setId(rs.getInt(1));
+               course.setName(rs.getString(2));
+               course.setDescription(rs.getString(3));
+               course.setCredit(rs.getInt(4));
+               course.setAuthor_id(rs.getInt(5));
+
+                return course;
+            }
+        });
+    }
 }
