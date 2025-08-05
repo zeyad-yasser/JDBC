@@ -66,7 +66,7 @@ public class CourseService {
                 FROM Course c
                 JOIN Rating r ON c.id = r.course_id
                 GROUP BY c.id, c.name, c.description, c.credit, c.author_id
-                ORDER BY AVG(r.rating_value) DESC 
+                ORDER BY AVG(r.number) DESC
                 LIMIT 5 
                 """;
 
@@ -83,5 +83,7 @@ public class CourseService {
                 return course;
             }
         });
+        //return List.of(new Course(1, "Java Basics", "Intro course", 3, 1));
     }
+
 }

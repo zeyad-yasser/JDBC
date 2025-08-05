@@ -3,6 +3,7 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.controllers;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,12 @@ public class CourseController {
         this.courseService = courseService;
     }
 
+    @Operation(summary = "Discover recommended courses", description = "Returns a list of recommended courses based on credit or other criteria")
     @GetMapping("/discover")
-    public List<Course> discoverCourses()
-    {
+    public List<Course> discoverCourses() {
         return courseService.getRecommendedCourses();
     }
+
 
     @GetMapping("/{id}")
     public Course viewCourse(@PathVariable int id){
