@@ -1,8 +1,10 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.controllers;
 
 
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.CourseMapper;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ public class CourseController {
 
     private final CourseService courseService;
 
+//    @Autowired
     public CourseController(CourseService courseService) {
 
         this.courseService = courseService;

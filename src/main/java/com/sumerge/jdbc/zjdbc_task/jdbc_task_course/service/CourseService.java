@@ -1,5 +1,6 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.CourseMapper;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,11 @@ public class CourseService {
     @Autowired
     CourseRepo repo;
 
-    private final JdbcTemplate template;
-
+    //private final JdbcTemplate template;
+    private final CourseMapper courseMapper;
     @Autowired
-    public CourseService(JdbcTemplate template) {
-        this.template = template;
+    public CourseService(CourseMapper courseMapper) {
+        this.courseMapper= courseMapper;
     }
 
     public void addCourse(Course course) {
