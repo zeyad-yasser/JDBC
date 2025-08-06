@@ -3,6 +3,7 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.controllers;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,5 +46,13 @@ public class CourseController {
         courseService.deleteCourse(id);
     }
 
+    @GetMapping
+    public Page<Course> getCourse(@RequestParam(defaultValue ="0")int page, @RequestParam(defaultValue = "10")int size) {
+        return courseService.getCoursesPaginated(page, size);
+    }
 
+    @GetMapping("/by-author")
+    public List<Course> getCoursesByAuthorEmail(@RequestParam String email){
+        return courseService.getCourseByAuthorEmail(email);
+    }
 }

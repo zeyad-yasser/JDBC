@@ -1,7 +1,9 @@
-INSERT INTO Author (id, name, email, birthdate) VALUES
-      (1, 'Ali Mansour', 'ali.mansour@example.com', '1980-01-01'),
-      (2, 'Sara Youssef', 'sara.youssef@example.com', '1990-05-15'),
-      (3, 'Mohamed Tarek', 'mohamed.tarek@example.com', '1985-09-20');
+INSERT INTO author (id, name, email, birthdate) VALUES
+    (1, 'Zeyad Yasser', 'zeyad.yasser@example.com', '1980-01-01'),
+   (2, 'Samy Youssef', 'samy.youssef@example.com', '1990-05-15'),
+   (3, 'Mohamed Tarek', 'mohamed.tarek@example.com', '1985-09-20'),
+   (4, 'Samy Amry', 'samy.amry@example.com', '1990-05-15');
+
 
 INSERT INTO Course (id, name, description, credit, author_id) VALUES
       (1, 'Java Basics', 'Introductory course for Java programming.', 3, 1),

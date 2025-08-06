@@ -1,23 +1,30 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model;
 
+import jakarta.persistence.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.swing.plaf.SplitPaneUI;
 @Component
-@Scope("prototype")
+//@Scope("prototype")
+@Entity
 public class Course {
+    @Id
     int id;
     String name;
     String description;
     int credit;
     int author_id;
+    //@ManyToOne
+    //@JoinColumn(name = "author_id")
+   //private Author author;
+
 
     public Course(int id, String name, String description, int credit, int author_id) {
-        this.id=id;
+        this.id = id;
         this.name = name;
-        this.description= description;
-        this.credit= credit;
+        this.description = description;
+        this.credit = credit;
         this.author_id = author_id;
     }
 
@@ -53,6 +60,7 @@ public class Course {
     public void setCredit(int credit) {
         this.credit = credit;
     }
+
 
     public int getAuthor_id() {
         return author_id;
