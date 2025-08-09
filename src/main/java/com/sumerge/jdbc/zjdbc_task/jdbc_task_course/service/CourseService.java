@@ -1,5 +1,6 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.CourseNotFoundException;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.CourseMapper;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
@@ -37,7 +38,7 @@ public class CourseService {
     }
     public Course viewCourse(int courseId) {
 
-       return repo.findById(courseId).orElse(new Course());
+       return repo.findById(courseId).orElseThrow(()-> new CourseNotFoundException("Course with ID: "+courseId+ " not found"));
     }
 
     public void deleteCourse(int courseId) {

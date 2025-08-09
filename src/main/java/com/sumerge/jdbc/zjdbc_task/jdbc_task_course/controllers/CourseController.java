@@ -3,6 +3,7 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.controllers;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.CourseMapper;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,11 +16,12 @@ import java.util.List;
 public class CourseController {
 
     private final CourseService courseService;
+    private final CourseMapper courseMapper;
 
-//    @Autowired
-    public CourseController(CourseService courseService) {
-
+    @Autowired
+    public CourseController(CourseService courseService, CourseMapper courseMapper) {
         this.courseService = courseService;
+        this.courseMapper = courseMapper;
     }
 
     @GetMapping("/discover")
@@ -29,18 +31,22 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    public Course viewCourse(@PathVariable int id){
-        return courseService.viewCourse(id);
+    public CourseDTO viewCourse(@PathVariable int id) {
+        Course course = courseService.viewCourse(id);
+        return courseMapper.toDTO(course);
     }
 
     @PostMapping
-    public void addCourse(@RequestBody Course course)
+    public void addCourse(@RequestBody CourseDTO courseDTO)
     {
+        Course  course = courseMapper.toEntity(courseDTO);
         courseService.addCourse(course);
     }
+
     @PutMapping("/{id}")
-    public void updateCourse(@PathVariable int id, @RequestBody Course course){
-        course.setId(id);
+    public void updateCourse(@PathVariable int id, @RequestBody CourseDTO courseDTO){
+        courseDTO.setId(id);
+        Course course = courseMapper.toEntity(courseDTO);
         courseService.updateCourse(course);
     }
     @DeleteMapping("/{id}")
@@ -50,12 +56,13 @@ public class CourseController {
     }
 
     @GetMapping
-    public Page<Course> getCourse(@RequestParam(defaultValue ="0")int page, @RequestParam(defaultValue = "10")int size) {
-        return courseService.getCoursesPaginated(page, size);
+    public Page<CourseDTO> getCourse(@RequestParam(defaultValue ="0")int page, @RequestParam(defaultValue = "10")int size) {
+        return courseService.getCoursesPaginated(page, size).map(courseMapper::toDTO);
     }
 
     @GetMapping("/by-author")
-    public List<Course> getCoursesByAuthorEmail(@RequestParam String email){
-        return courseService.getCourseByAuthorEmail(email);
+    public List<CourseDTO> getCoursesByAuthorEmail(@RequestParam String email){
+    List<Course> courses = courseService.getCourseByAuthorEmail(email);
+    return courses.stream().map(courseMapper::toDTO).toList();
     }
 }
