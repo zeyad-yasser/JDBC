@@ -1,23 +1,22 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model;
 
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-import javax.swing.plaf.SplitPaneUI;
-@Component
-//@Scope("prototype")
 @Entity
+@Table(name = "course")
 public class Course {
     @Id
-    int id;
-    String name;
-    String description;
-    int credit;
-    int author_id;
-    //@ManyToOne
-    //@JoinColumn(name = "author_id")
-   //private Author author;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(nullable = false)
+    private String name;
+
+    private String description;
+    private int credit;
+
+    @Column(name = "author_id")
+    private int author_id;
 
 
     public Course(int id, String name, String description, int credit, int author_id) {

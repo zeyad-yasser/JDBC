@@ -1,16 +1,33 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper;
 
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface CourseMapper {
+@Component
+public class CourseMapper {
 
-    @Mapping(source= "author_id", target= "authorId")
-    CourseDTO toDTO(Course course);
+    public CourseDTO toDTO(Course course) {
+        if (course == null) return null;
+        return new CourseDTO(
+                course.getId(),
+                course.getName(),
+                course.getDescription(),
+                course.getCredit(),
+                course.getAuthor_id()
+        );
+    }
 
-    @Mapping(source= "authorId", target= "author_id")
-    Course toEntity(CourseDTO courseDTO);
+    public Course toEntity(CourseDTO courseDTO) {
+        if (courseDTO == null) return null;
+        Course course = new Course();
+        if (courseDTO.getId() != null) {
+            course.setId(courseDTO.getId());
+        }
+        course.setName(courseDTO.getName());
+        course.setDescription(courseDTO.getDescription());
+        course.setCredit(courseDTO.getCredit());
+        course.setAuthor_id(courseDTO.getAuthorId());
+        return course;
+    }
 }
