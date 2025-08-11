@@ -17,6 +17,15 @@ public class CourseMapper {
                 course.getAuthor_id()
         );
     }
+    public Course toEntityForCreate(CourseDTO dto) {
+        if (dto == null) return null;
+        Course course = new Course();
+        course.setName(dto.getName());
+        course.setDescription(dto.getDescription());
+        course.setCredit(dto.getCredit());
+        course.setAuthor_id(dto.getAuthorId());
+        return course;
+    }
 
     public Course toEntity(CourseDTO courseDTO) {
         if (courseDTO == null) return null;

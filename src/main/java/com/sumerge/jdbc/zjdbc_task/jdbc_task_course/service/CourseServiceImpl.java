@@ -8,11 +8,12 @@ import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepo courseRepo;
@@ -32,7 +33,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course viewCourse(int id) {
-        return courseRepo.findById(id).orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
+        return courseRepo.findById(id)
+                .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
     }
 
     @Override
@@ -43,15 +45,17 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional
     public void addCourse(CourseDTO courseDTO) {
-        Course course = mapper.toEntity(courseDTO);
+        Course course = mapper.toEntityForCreate(courseDTO);
         courseRepo.save(course);
     }
 
     @Override
+    @Transactional
     public void updateCourse(int id, CourseDTO courseDTO) {
-        Course existing = courseRepo.findById(id).orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
-        // update fields
+        Course existing = courseRepo.findById(id)
+                .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
         existing.setName(courseDTO.getName());
         existing.setDescription(courseDTO.getDescription());
         existing.setCredit(courseDTO.getCredit());
@@ -60,6 +64,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional
     public void deleteCourse(int id) {
         if (!courseRepo.existsById(id)) {
             throw new CourseNotFoundException("Course with ID: " + id + " not found");
@@ -70,13 +75,13 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Page<CourseDTO> getCoursesDTOPaginated(int page, int size) {
         Page<Course> p = courseRepo.findAll(PageRequest.of(page, size));
-        List<CourseDTO> dtos = p.getContent().stream().map(mapper::toDTO).collect(Collectors.toList());
-        return new PageImpl<>(dtos, PageRequest.of(page, size), p.getTotalElements());
+        return p.map(mapper::toDTO);
     }
 
     @Override
     public List<CourseDTO> getCoursesDTOByAuthorEmail(String email) {
-        List<Course> courses = courseRepo.findByAuthorEmail(email);
-        return courses.stream().map(mapper::toDTO).collect(Collectors.toList());
+        return courseRepo.findByAuthorEmail(email).stream()
+                .map(mapper::toDTO)
+                .toList();
     }
 }
