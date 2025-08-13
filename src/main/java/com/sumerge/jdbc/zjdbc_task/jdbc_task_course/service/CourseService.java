@@ -1,57 +1,18 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class CourseService {
-
-    @Autowired
-    CourseRepo repo;
-
-    private final JdbcTemplate template;
-
-    @Autowired
-    public CourseService(JdbcTemplate template) {
-        this.template = template;
-    }
-
-    public void addCourse(Course course) {
-        repo.save(course);
-    }
-
-    public void updateCourse(Course course) {
-        repo.save(course);
-    }
-    public List<Course> viewAllCourses()
-    {
-        return repo.findAll();
-    }
-    public Course viewCourse(int courseId) {
-
-       return repo.findById(courseId).orElse(new Course());
-    }
-
-    public void deleteCourse(int courseId) {
-
-        repo.deleteById(courseId);
-    }
-    public List<Course> getRecommendedCourses() {
-               return repo.findTopRatedCourses(PageRequest.of(0,5)).getContent();
-    }
-
-    public Page<Course> getCoursesPaginated(int page, int size){
-        return repo.findAll(PageRequest.of(page,size));
-    }
-
-    public List<Course>getCourseByAuthorEmail(String email){
-        return repo.findByAuthorEmail(email);
-    }
+public interface CourseService {
+    List<Course> getRecommendedCourses();
+    Course viewCourse(int id);                 // used in CommandLineRunner
+    CourseDTO getCourseDTO(int id);            // used by controller
+    void addCourse(CourseDTO courseDTO);
+    void updateCourse(int id, CourseDTO courseDTO);
+    void deleteCourse(int id);
+    Page<CourseDTO> getCoursesDTOPaginated(int page, int size);
+    List<CourseDTO> getCoursesDTOByAuthorEmail(String email);
 }

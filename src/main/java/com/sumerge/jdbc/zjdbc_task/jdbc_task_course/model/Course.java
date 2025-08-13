@@ -1,39 +1,40 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model;
 
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-import javax.swing.plaf.SplitPaneUI;
-@Component
-//@Scope("prototype")
 @Entity
+@Table(name = "course")
 public class Course {
+
     @Id
-    int id;
-    String name;
-    String description;
-    int credit;
-    int author_id;
-    //@ManyToOne
-    //@JoinColumn(name = "author_id")
-   //private Author author;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // ✅ Ensures DB handles ID generation
+    private Integer id;
 
+    @Column(nullable = false)
+    private String name;
 
-    public Course(int id, String name, String description, int credit, int author_id) {
-        this.id = id;
+    private String description;
+
+    private int credit;
+
+    @Column(name = "author_id", nullable = false)
+    private int author_id;
+
+    public Course() {}
+
+    public Course(String name, String description, int credit, int author_id) {
         this.name = name;
         this.description = description;
         this.credit = credit;
         this.author_id = author_id;
     }
 
-    public  Course(){}
-    public int getId() {
+    // ✅ Getters and setters
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -60,7 +61,6 @@ public class Course {
     public void setCredit(int credit) {
         this.credit = credit;
     }
-
 
     public int getAuthor_id() {
         return author_id;

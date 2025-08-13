@@ -18,7 +18,7 @@ public interface CourseRepo extends JpaRepository<Course, Integer> {
     SELECT c.* FROM course c
     JOIN rating r ON c.id = r.course_id
     GROUP BY c.id
-    ORDER BY AVG(r.rating_value) DESC
+    ORDER BY AVG(r.number) DESC
 """, countQuery = """
     SELECT COUNT(DISTINCT c.id) FROM course c
     JOIN rating r ON c.id = r.course_id
