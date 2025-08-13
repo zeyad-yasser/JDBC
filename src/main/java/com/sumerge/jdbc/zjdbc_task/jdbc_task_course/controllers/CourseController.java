@@ -55,10 +55,16 @@ public class CourseController {
             @ApiResponse(responseCode = "201", description = "Course successfully created"),
             @ApiResponse(responseCode = "400", description = "Invalid course data provided")
     })
-    @PostMapping
+    /*@PostMapping
     public ResponseEntity<Void> addCourse(@Valid @RequestBody CourseDTO courseDTO) {
         courseService.addCourse(courseDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }*/
+
+    @PostMapping
+    public ResponseEntity<CourseDTO> addCourse(@Valid @RequestBody CourseDTO courseDTO) {
+        CourseDTO saved = courseService.addCourse(courseDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @Operation(summary = "Update an existing course", description = "Updates a course with the given ID")
@@ -105,4 +111,6 @@ public class CourseController {
         List<CourseDTO> courseDTOs = courseService.getCoursesDTOByAuthorEmail(email);
         return ResponseEntity.ok(courseDTOs);
     }
+
+
 }

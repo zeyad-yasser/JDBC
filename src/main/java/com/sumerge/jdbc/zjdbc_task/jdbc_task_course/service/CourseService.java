@@ -10,7 +10,7 @@ public interface CourseService {
     List<Course> getRecommendedCourses();
     Course viewCourse(int id);                 // used in CommandLineRunner
     CourseDTO getCourseDTO(int id);            // used by controller
-    void addCourse(CourseDTO courseDTO);
+    CourseDTO addCourse(CourseDTO courseDTO);
     void updateCourse(int id, CourseDTO courseDTO);
     void deleteCourse(int id);
     Page<CourseDTO> getCoursesDTOPaginated(int page, int size);
