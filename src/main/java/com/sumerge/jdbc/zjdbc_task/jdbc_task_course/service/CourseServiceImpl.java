@@ -46,9 +46,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public void addCourse(CourseDTO courseDTO) {
+    public CourseDTO addCourse(CourseDTO courseDTO) {
         Course course = mapper.toEntityForCreate(courseDTO);
-        courseRepo.save(course);
+        Course saved = courseRepo.save(course);
+        return mapper.toDTO(saved);
     }
 
     @Override

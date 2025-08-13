@@ -9,7 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.sumerge.jdbc.zjdbc_task.jdbc_task_course")
+
 public class JdbcTaskCourseApplication {
     public static void main(String[] args) {
         SpringApplication.run(JdbcTaskCourseApplication.class, args);
