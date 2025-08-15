@@ -14,7 +14,7 @@ public class CourseMapper {
                 course.getName(),
                 course.getDescription(),
                 course.getCredit(),
-                course.getAuthor_id()
+                course.getAuthorId()
         );
     }
     public Course toEntityForCreate(CourseDTO dto) {
@@ -23,7 +23,7 @@ public class CourseMapper {
         course.setName(dto.getName());
         course.setDescription(dto.getDescription());
         course.setCredit(dto.getCredit());
-        course.setAuthor_id(dto.getAuthorId());
+        course.setAuthorId(dto.getAuthorId());
         return course;
     }
 
@@ -36,7 +36,7 @@ public class CourseMapper {
         course.setName(courseDTO.getName());
         course.setDescription(courseDTO.getDescription());
         course.setCredit(courseDTO.getCredit());
-        course.setAuthor_id(courseDTO.getAuthorId());
+        course.setAuthorId(courseDTO.getAuthorId());
         return course;
     }
 }

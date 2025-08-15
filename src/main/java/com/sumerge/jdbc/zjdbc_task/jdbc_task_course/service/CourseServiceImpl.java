@@ -60,7 +60,7 @@ public class CourseServiceImpl implements CourseService {
         existing.setName(courseDTO.getName());
         existing.setDescription(courseDTO.getDescription());
         existing.setCredit(courseDTO.getCredit());
-        existing.setAuthor_id(courseDTO.getAuthorId());
+        existing.setAuthorId(courseDTO.getAuthorId());
         courseRepo.save(existing);
     }
 

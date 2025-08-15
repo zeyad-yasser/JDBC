@@ -32,7 +32,7 @@ class CourseMapperTest {
         assertEquals("Spring", course.getName());
         assertEquals("Spring Boot course", course.getDescription());
         assertEquals(4, course.getCredit());
-        assertEquals(2, course.getAuthor_id());
+        assertEquals(2, course.getAuthorId());
     }
 
     @Test
