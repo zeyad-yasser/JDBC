@@ -1,11 +1,13 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
+
 @Entity
+@Table(name = "author")
 public class Author {
    @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private String email;
