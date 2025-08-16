@@ -11,7 +11,9 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
@@ -19,39 +21,45 @@ import org.springframework.stereotype.Component;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     private final CustomUserDetailsService userDetailsService;
     private final ValidationHeaderFilter validationHeaderFilter;
 
-
-    public SecurityConfig(CustomUserDetailsService userDetailsService, ValidationHeaderFilter validationHeaderFilter)
-    {
+    public SecurityConfig(CustomUserDetailsService userDetailsService,
+                          ValidationHeaderFilter validationHeaderFilter) {
         this.userDetailsService = userDetailsService;
         this.validationHeaderFilter = validationHeaderFilter;
     }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
-    {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth ->auth
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/courses/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/courses").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/courses/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/courses/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll() // Allow registration
                         .anyRequest().denyAll()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(validationHeaderFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
+
     @Bean
-    public AuthenticationManager authManager(HttpSecurity http) throws Exception
-    {
+    public AuthenticationManager authManager(HttpSecurity http,
+                                             PasswordEncoder passwordEncoder) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder.userDetailsService(userDetailsService)
-                .passwordEncoder(NoOpPasswordEncoder.getInstance());
+                //.passwordEncoder(passwordEncoder); // Use BCrypt here
+                .passwordEncoder(passwordEncoder); // Use BCrypt here
         return builder.build();
-
     }
 
-
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
