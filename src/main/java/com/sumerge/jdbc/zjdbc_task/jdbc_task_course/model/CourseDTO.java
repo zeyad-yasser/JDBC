@@ -34,6 +34,9 @@ public class CourseDTO {
         this.credit = credit;
         this.authorId = authorId;
     }
+    public CourseDTO() {
+        // Default constructor for testing and serialization
+    }
 
     public Integer getId() {
         return id;
