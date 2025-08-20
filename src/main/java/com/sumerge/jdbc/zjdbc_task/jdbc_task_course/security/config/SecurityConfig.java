@@ -35,10 +35,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/courses/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/courses").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/courses/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/courses/**").authenticated()
+                        .requestMatchers( "/courses/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll() // Allow registration
                         .anyRequest().denyAll()
                 )
@@ -53,7 +50,6 @@ public class SecurityConfig {
                                              PasswordEncoder passwordEncoder) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder.userDetailsService(userDetailsService)
-                //.passwordEncoder(passwordEncoder); // Use BCrypt here
                 .passwordEncoder(passwordEncoder); // Use BCrypt here
         return builder.build();
     }

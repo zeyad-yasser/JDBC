@@ -1,7 +1,7 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
 
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.AppUser;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.AppUser;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.UserRegistrationDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.AppUserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;

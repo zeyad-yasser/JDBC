@@ -1,4 +1,4 @@
-package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model;
+package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity;
 
 import jakarta.persistence.*;
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
 @Component
 public class ValidationHeaderFilter extends OncePerRequestFilter {
     @Override
@@ -15,6 +16,7 @@ public class ValidationHeaderFilter extends OncePerRequestFilter {
     {
         String header = request.getHeader("x-validation-report");
         String path = request.getRequestURI();
+        // how to bypass GET requests in a OncePerRequestFilter
         if (path.startsWith("/courses/") && request.getMethod().equals("GET"))
         {
             filterChain.doFilter(request, response);

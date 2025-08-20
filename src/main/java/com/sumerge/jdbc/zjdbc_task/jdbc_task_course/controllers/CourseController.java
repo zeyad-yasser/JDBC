@@ -1,6 +1,6 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.controllers;
 
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;

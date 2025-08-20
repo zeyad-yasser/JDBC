@@ -1,6 +1,6 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
 import org.springframework.data.domain.Page;
 

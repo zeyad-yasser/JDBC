@@ -1,11 +1,7 @@
-package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model;
+package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +23,7 @@ public class Course {
     @Column(name = "authorId", nullable = false)
     private int authorId;
 
-    // ✅ Link to Rating table
+
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
 

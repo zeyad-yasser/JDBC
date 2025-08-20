@@ -4,49 +4,53 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.JdbcTaskCourseApplication;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
 import org.junit.jupiter.api.*;
-import org.springframework.http.MediaType;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
-//import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
-
-
-@SpringBootTest(classes = JdbcTaskCourseApplication.class)
-@AutoConfigureMockMvc
+@SpringBootTest(
+        classes = JdbcTaskCourseApplication.class,
+        webEnvironment = SpringBootTest.WebEnvironment.MOCK
+)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CourseIntegrationTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private WebApplicationContext context;
 
     @Autowired
     private ObjectMapper objectMapper;
 
+    private MockMvc mockMvc;
     private static CourseDTO sampleCourse;
 
+    @BeforeEach
+    void setup() {
+        // Build MockMvc manually from the WebApplicationContext
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    }
+
     @BeforeAll
-    static void setup() {
+    static void init() {
         sampleCourse = new CourseDTO();
         sampleCourse.setName("Integration Test Course");
         sampleCourse.setDescription("Test Description");
         sampleCourse.setCredit(3);
-        sampleCourse.setAuthorId(1); // Adjust based on your DB seeding
-    }
-    @Test
-    void contextLoads() {
-        Assertions.assertNotNull(mockMvc, "MockMvc should be injected");
+        sampleCourse.setAuthorId(1); // adjust based on your seeded data
     }
 
-    //  Create Course
+    @Test
+    void contextLoads() {
+        Assertions.assertNotNull(mockMvc, "MockMvc should be initialized");
+    }
+
     @Test
     @Order(1)
     void shouldCreateCourse() throws Exception {
@@ -59,7 +63,6 @@ public class CourseIntegrationTest {
                 .andExpect(jsonPath("$.name").value("Integration Test Course"));
     }
 
-    //   Get All Courses
     @Test
     @Order(2)
     void shouldGetAllCourses() throws Exception {
@@ -68,7 +71,6 @@ public class CourseIntegrationTest {
                 .andExpect(jsonPath("$").isArray());
     }
 
-    //  Update Course
     @Test
     @Order(3)
     void shouldUpdateCourse() throws Exception {
@@ -83,7 +85,6 @@ public class CourseIntegrationTest {
                 .andExpect(jsonPath("$.name").value("Updated Course Name"));
     }
 
-    // Delete Course
     @Test
     @Order(4)
     void shouldDeleteCourse() throws Exception {

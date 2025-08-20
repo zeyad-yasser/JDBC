@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
-@SpringBootApplication(scanBasePackages = "com.sumerge.jdbc.zjdbc_task.jdbc_task_course")
+@SpringBootApplication()
+
 
 public class JdbcTaskCourseApplication {
     public static void main(String[] args) {

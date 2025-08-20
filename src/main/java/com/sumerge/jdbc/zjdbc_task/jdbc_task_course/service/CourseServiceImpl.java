@@ -2,7 +2,7 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.CourseNotFoundException;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.CourseMapper;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +57,7 @@ public class CourseServiceImpl implements CourseService {
     public void updateCourse(int id, CourseDTO courseDTO) {
         Course existing = courseRepo.findById(id)
                 .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
+        //look up @mappingtarget
         existing.setName(courseDTO.getName());
         existing.setDescription(courseDTO.getDescription());
         existing.setCredit(courseDTO.getCredit());

@@ -1,6 +1,6 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo;
 
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Course;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
