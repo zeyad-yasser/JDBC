@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class CourseMapperTest {
 
-    private final CourseMapper mapper = new CourseMapper();
+    private final LegacyCourseMapper mapper = new LegacyCourseMapper();
 
     @Test
     void testToDTO_ValidCourse() {

@@ -2,6 +2,7 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.CourseNotFoundException;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.CourseMapper;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.LegacyCourseMapper;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
@@ -18,6 +19,7 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepo courseRepo;
     private final CourseMapper mapper;
+    //private final LegacyCourseMapper mapper;
 
     @Autowired
     public CourseServiceImpl(CourseRepo courseRepo, CourseMapper mapper) {
@@ -55,14 +57,16 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public void updateCourse(int id, CourseDTO courseDTO) {
+
         Course existing = courseRepo.findById(id)
                 .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
         //look up @mappingtarget
-        existing.setName(courseDTO.getName());
+        mapper.updateCourseFromDTO(courseDTO, existing);
+        courseRepo.save(existing);
+        /*existing.setName(courseDTO.getName());
         existing.setDescription(courseDTO.getDescription());
         existing.setCredit(courseDTO.getCredit());
-        existing.setAuthorId(courseDTO.getAuthorId());
-        courseRepo.save(existing);
+        existing.setAuthorId(courseDTO.getAuthorId());*/
     }
 
     @Override
