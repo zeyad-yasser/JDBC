@@ -1,12 +1,26 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
+
+    @JsonProperty("timestamp")
     private LocalDateTime timestamp;
+
+    @JsonProperty("status")
     private int status;
+
+    @JsonProperty("error")
     private String error;
+
+    @JsonProperty("message")
     private String message;
+
+    @JsonProperty("path")
     private String path;
 
     public ErrorResponse() {

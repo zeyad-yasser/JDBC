@@ -38,13 +38,12 @@ public class JdbcTaskCourseApplication {
                    forEach(c -> System.out.println(c.getName()));
 
            */
+            /*
           String raw = "admin123";
           String encoded = new BCryptPasswordEncoder().encode(raw);
           System.out.println(encoded);
-
+            */
         };
     }
 }
 
-/*INSERT INTO users (username, password, role) VALUES
-('admin', '$2a$10$Oz4JiCSuvtbW/roaML5/m.mLp8y/TK1zNDkl.1U.ANXiQPqdSWhdW ', 'ROLE_ADMIN');*/
