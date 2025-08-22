@@ -2,67 +2,90 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "author")
 public class Author {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private String email;
-    private LocalDate birthdate;
+   @Column(name = "author_id", nullable = false)
+    private int authorId;
 
-    public Author(int id, String name, String email, LocalDate birthdate) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.birthdate = birthdate;
+   @Column(name= "author_name", nullable = false)
+    private String authorName;
+
+    @Column(name= "author_email", nullable = false, unique = true)
+    private String authorEmail;
+
+    @Column(name= "author_birthdate", nullable = false)
+    private LocalDate authorBirthdate;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Course> courses = new ArrayList<>();
+
+    public int getAuthorId() {
+        return authorId;
     }
 
-    public Author() {
-
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
     }
 
-    public int getId() {
-        return id;
+    public String getAuthorName() {
+        return authorName;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
-    public String getName() {
-        return name;
+    public String getAuthorEmail() {
+        return authorEmail;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAuthorEmail(String authorEmail) {
+        this.authorEmail = authorEmail;
     }
 
-    public String getEmail() {
-        return email;
+    public LocalDate getAuthorBirthdate() {
+        return authorBirthdate;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAuthorBirthdate(LocalDate authorBirthdate) {
+        this.authorBirthdate = authorBirthdate;
     }
 
-    public LocalDate getBirthdate() {
-        return birthdate;
+    public List<Course> getCourses() {
+        return courses;
     }
 
-    public void setBirthdate(LocalDate birthdate) {
-        this.birthdate = birthdate;
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
     }
 
     @Override
     public String toString() {
         return "Author{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", birthdate=" + birthdate +
+                "authorId=" + authorId +
+                ", authorName='" + authorName + '\'' +
+                ", authorEmail='" + authorEmail + '\'' +
+                ", authorBirthdate=" + authorBirthdate +
+                ", courses=" + courses +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Author author = (Author) o;
+        return authorId == author.authorId && Objects.equals(authorName, author.authorName) && Objects.equals(authorEmail, author.authorEmail) && Objects.equals(authorBirthdate, author.authorBirthdate) && Objects.equals(courses, author.courses);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(authorId, authorName, authorEmail, authorBirthdate, courses);
     }
 }

@@ -17,43 +17,91 @@ public class Course {
     private String name;
 
     private String description;
-
     private int credit;
-
+    /*
     @Column(name = "authorId", nullable = false)
-    private int authorId;
+    private int authorId;*/
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Assessment> assessments = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
 
-    public Course() {}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
+    private Author author;
 
-    public Course(String name, String description, int credit, int authorId) {
+    public Course() {
+    }
+
+    public Course(String name, String description, int credit, Author author) {
         this.name = name;
         this.description = description;
         this.credit = credit;
-        this.authorId = authorId;
+        this.author = author;
     }
 
     // Getters & setters
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public List<Assessment> getAssessments() {
+        return assessments;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setAssessments(List<Assessment> assessments) {
+        this.assessments = assessments;
+    }
 
-    public int getCredit() { return credit; }
-    public void setCredit(int credit) { this.credit = credit; }
+    public Author getAuthor() {
+        return author;
+    }
 
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getCredit() {
+        return credit;
+    }
+
+    public void setCredit(int credit) {
+        this.credit = credit;
+    }
+/*
     public int getAuthorId() { return authorId; }
-    public void setAuthorId(int authorId) { this.authorId = authorId; }
+    public void setAuthorId(int authorId) { this.authorId = authorId; }*/
 
-    public List<Rating> getRatings() { return ratings; }
-    public void setRatings(List<Rating> ratings) { this.ratings = ratings; }
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
 
     @Override
     public String toString() {
@@ -62,8 +110,9 @@ public class Course {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", credit=" + credit +
-                ", authorId=" + authorId +
+                ", assessments=" + assessments +
                 ", ratings=" + ratings +
+                ", author=" + author +
                 '}';
     }
 }

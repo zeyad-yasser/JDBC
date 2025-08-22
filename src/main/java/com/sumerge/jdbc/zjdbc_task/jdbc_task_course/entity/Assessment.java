@@ -16,9 +16,7 @@ public class Assessment {
     @JoinColumn(name = "courseId", nullable = false)
     private Course course;
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() {return id;}
 
     public void setId(Long id) {
         this.id = id;

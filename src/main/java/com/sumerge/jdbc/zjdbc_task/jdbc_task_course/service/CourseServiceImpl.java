@@ -1,10 +1,13 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Author;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.AuthorNotFoundException;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.CourseNotFoundException;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.CourseMapper;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.LegacyCourseMapper;
+//import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.LegacyCourseMapper;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.AuthorRepo;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -19,12 +22,14 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepo courseRepo;
     private final CourseMapper mapper;
+    private final AuthorRepo authorRepo;
     //private final LegacyCourseMapper mapper;
 
     @Autowired
-    public CourseServiceImpl(CourseRepo courseRepo, CourseMapper mapper) {
+    public CourseServiceImpl(CourseRepo courseRepo, CourseMapper mapper, AuthorRepo authorRepo) {
         this.courseRepo = courseRepo;
         this.mapper = mapper;
+        this.authorRepo = authorRepo;
     }
 
     @Override
@@ -49,7 +54,11 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public CourseDTO addCourse(CourseDTO courseDTO) {
+
         Course course = mapper.toEntityForCreate(courseDTO);
+        Author author = authorRepo.findById(courseDTO.getAuthorId())
+                .orElseThrow(()-> new AuthorNotFoundException("Author with ID: " + courseDTO.getAuthorId() + " not found"));
+        course.setAuthor(author);
         Course saved = courseRepo.save(course);
         return mapper.toDTO(saved);
     }
@@ -58,11 +67,18 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public void updateCourse(int id, CourseDTO courseDTO) {
 
+        //look up @mappingtarget
         Course existing = courseRepo.findById(id)
                 .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
-        //look up @mappingtarget
         mapper.updateCourseFromDTO(courseDTO, existing);
-        courseRepo.save(existing);
+
+        Author author = authorRepo.findById(courseDTO.getAuthorId())
+                .orElseThrow(()->new AuthorNotFoundException("Author with ID: " + courseDTO.getAuthorId() + " not found"));
+        existing.setAuthor(author);
+
+       courseRepo.save(existing);
+
+
         /*existing.setName(courseDTO.getName());
         existing.setDescription(courseDTO.getDescription());
         existing.setCredit(courseDTO.getCredit());

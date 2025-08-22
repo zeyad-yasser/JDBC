@@ -26,8 +26,8 @@ public interface CourseRepo extends JpaRepository<Course, Integer> {
     Page<Course> findTopRatedCourses(Pageable pageable);
     @Query(value = """
     SELECT c.* FROM course c 
-    JOIN author a ON c.author_id = a.id 
-    WHERE a.email = :email
+    JOIN author a ON c.author_id = a.author_id 
+    WHERE a.author_email = :email
 """, nativeQuery = true)
     List<Course> findByAuthorEmail(@Param("email") String email);
 

@@ -5,6 +5,7 @@ import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
 import org.springframework.stereotype.Component;
 
 //use mapstruct
+/*
 @Component
 public class LegacyCourseMapper {
 
@@ -14,7 +15,7 @@ public class LegacyCourseMapper {
                 course.getId(),
                 course.getName(),
                 course.getDescription(),
-                course.getCredit(),
+                course.getCredit()
                 course.getAuthorId()
         );
     }
@@ -41,3 +42,4 @@ public class LegacyCourseMapper {
         return course;
     }
 }
+*/

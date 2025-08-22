@@ -8,16 +8,18 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
 
-    CourseMapper INSTANCE = Mappers.getMapper(CourseMapper.class);
-
+    
+    @Mapping(target = "authorId", source = "author.authorId")
     CourseDTO toDTO(Course course);
 
+    @Mapping(target = "author", ignore = true)
     Course toEntity(CourseDTO dto);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "author", ignore = true)
     Course toEntityForCreate(CourseDTO dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "author", ignore = true)
     void updateCourseFromDTO(CourseDTO dto, @MappingTarget Course course);
-
 }
