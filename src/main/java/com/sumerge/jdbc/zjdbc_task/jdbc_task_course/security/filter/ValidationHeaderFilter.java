@@ -17,11 +17,16 @@ public class ValidationHeaderFilter extends OncePerRequestFilter {
         String header = request.getHeader("x-validation-report");
         String path = request.getRequestURI();
         // how to bypass GET requests in a OncePerRequestFilter
-        if (path.startsWith("/courses/") && request.getMethod().equals("GET"))
+        if (path.startsWith("/courses/") || path.startsWith("/authors/")&& request.getMethod().equals("GET"))
         {
             filterChain.doFilter(request, response);
             return;
         }
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") || path.startsWith("/swagger-ui.html")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if(!"true".equalsIgnoreCase(header))
         {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
