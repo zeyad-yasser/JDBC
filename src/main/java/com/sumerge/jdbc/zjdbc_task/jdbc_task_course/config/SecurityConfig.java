@@ -1,8 +1,8 @@
-package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.security.config;
+package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.config;
 
 
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.security.filter.ValidationHeaderFilter;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.security.service.CustomUserDetailsService;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.filter.ValidationHeaderFilter;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,11 +12,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 @Configuration
 @EnableWebSecurity

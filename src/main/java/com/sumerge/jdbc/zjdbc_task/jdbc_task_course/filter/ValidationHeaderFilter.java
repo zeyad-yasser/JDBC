@@ -1,4 +1,4 @@
-package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.security.filter;
+package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
