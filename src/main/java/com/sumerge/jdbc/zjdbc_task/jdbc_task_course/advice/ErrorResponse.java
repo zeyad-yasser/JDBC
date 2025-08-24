@@ -1,4 +1,4 @@
-package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception;
+package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.advice;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

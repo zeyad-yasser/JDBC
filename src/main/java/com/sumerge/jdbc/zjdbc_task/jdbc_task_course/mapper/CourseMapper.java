@@ -22,4 +22,5 @@ public interface CourseMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "author", ignore = true)
     void updateCourseFromDTO(CourseDTO dto, @MappingTarget Course course);
+
 }

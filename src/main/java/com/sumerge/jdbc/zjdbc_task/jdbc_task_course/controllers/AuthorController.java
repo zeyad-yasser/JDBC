@@ -4,6 +4,7 @@ import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Author;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.AuthorMapper;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.AuthorDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.AuthorRepo;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.AuthorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,54 +21,43 @@ import java.util.stream.Collectors;
 @Tag(name = "Authors", description = "CRUD operations for authors")
 public class AuthorController {
 
-    private final AuthorRepo authorRepo;
-    private final AuthorMapper authorMapper;
+    private final AuthorService authorService;
 
     @Autowired
-    public AuthorController(AuthorRepo authorRepo, AuthorMapper authorMapper) {
-        this.authorRepo = authorRepo;
-        this.authorMapper = authorMapper;
+    public AuthorController(AuthorService authorService) {
+        this.authorService = authorService;
     }
 
-    @Operation(summary ="Get All Authors")
+    @Operation(summary = "Get All Authors")
     @GetMapping
     public List<AuthorDTO> getAllAuthors() {
-        return authorRepo.findAll().stream()
-                .map(authorMapper::toDto)
-                .collect(Collectors.toList());
+        return authorService.getAllAuthors();
     }
 
+    @Operation(summary = "Get Author by ID")
     @GetMapping("/{id}")
     public ResponseEntity<AuthorDTO> getAuthorById(@PathVariable int id) {
-        return authorRepo.findById(id)
-                .map(authorMapper::toDto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(authorService.getAuthorById(id));
     }
 
+    @Operation(summary = "Create a New Author")
     @PostMapping
     public ResponseEntity<AuthorDTO> createAuthor(@Valid @RequestBody AuthorDTO dto) {
-        Author saved = authorRepo.save(authorMapper.toEntity(dto));
-        return ResponseEntity.status(HttpStatus.CREATED).body(authorMapper.toDto(saved));
+        AuthorDTO created = authorService.createAuthor(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    @Operation(summary = "Update an Existing Author")
     @PutMapping("/{id}")
     public ResponseEntity<AuthorDTO> updateAuthor(@PathVariable int id, @Valid @RequestBody AuthorDTO dto) {
-        return authorRepo.findById(id)
-                .map(existing -> {
-                    authorMapper.updateAuthorFromDto(dto, existing);
-                    Author updated = authorRepo.save(existing);
-                    return ResponseEntity.ok(authorMapper.toDto(updated));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        AuthorDTO updated = authorService.updateAuthor(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
+    @Operation(summary = "Delete an Author")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable int id) {
-        if (!authorRepo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        authorRepo.deleteById(id);
+        authorService.deleteAuthor(id);
         return ResponseEntity.noContent().build();
     }
 }

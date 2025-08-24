@@ -23,8 +23,8 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepo courseRepo;
     private final CourseMapper mapper;
     private final AuthorRepo authorRepo;
-    //private final LegacyCourseMapper mapper;
 
+    //private final LegacyCourseMapper mapper;
     @Autowired
     public CourseServiceImpl(CourseRepo courseRepo, CourseMapper mapper, AuthorRepo authorRepo) {
         this.courseRepo = courseRepo;
@@ -83,6 +83,7 @@ public class CourseServiceImpl implements CourseService {
         existing.setDescription(courseDTO.getDescription());
         existing.setCredit(courseDTO.getCredit());
         existing.setAuthorId(courseDTO.getAuthorId());*/
+
     }
 
     @Override
