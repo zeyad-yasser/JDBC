@@ -106,7 +106,7 @@ public class CourseController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved courses")
     })
-    @GetMapping("/by-author")
+    @GetMapping("/author")
     public ResponseEntity<List<CourseDTO>> getCoursesByAuthorEmail(@RequestParam String email) {
         List<CourseDTO> courseDTOs = courseService.getCoursesDTOByAuthorEmail(email);
         return ResponseEntity.ok(courseDTOs);

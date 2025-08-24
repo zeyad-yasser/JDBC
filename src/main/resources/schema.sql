@@ -9,12 +9,13 @@ CREATE TABLE IF NOT EXISTS author (
 -- Course table
 CREATE TABLE IF NOT EXISTS course (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL,
+ name VARCHAR(100) NOT NULL,
     description VARCHAR(255),
     credit INT NOT NULL,
     author_id INT NOT NULL,
-    FOREIGN KEY (author_id) REFERENCES author(id)
+    FOREIGN KEY (author_id) REFERENCES author(author_id)
     );
+
 
 -- Rating table
 CREATE TABLE IF NOT EXISTS rating (

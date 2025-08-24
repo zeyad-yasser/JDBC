@@ -26,6 +26,15 @@ public class Author {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> courses = new ArrayList<>();
 
+    public Author(int authorId, String authorName, String authorEmail, LocalDate authorBirthdate, List<Course> courses) {
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.authorEmail = authorEmail;
+        this.authorBirthdate = authorBirthdate;
+        this.courses = courses;
+    }
+    public Author() {}
+
     public int getAuthorId() {
         return authorId;
     }
