@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -107,7 +108,7 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved courses")
     })
     @GetMapping("/author")
-    public ResponseEntity<List<CourseDTO>> getCoursesByAuthorEmail(@RequestParam String email) {
+    public ResponseEntity<List<CourseDTO>> getCoursesByAuthorEmail(@RequestParam @Email String email) {
         List<CourseDTO> courseDTOs = courseService.getCoursesDTOByAuthorEmail(email);
         return ResponseEntity.ok(courseDTOs);
     }

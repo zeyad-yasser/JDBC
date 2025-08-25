@@ -34,12 +34,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers( "/courses/**").authenticated()
-                        .requestMatchers("/authors/**").authenticated()
-                        .requestMatchers("/v3/api-docs").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll() // Allow registration
-                        .anyRequest().denyAll()
+//                        .anyRequest().denyAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(validationHeaderFilter, UsernamePasswordAuthenticationFilter.class);

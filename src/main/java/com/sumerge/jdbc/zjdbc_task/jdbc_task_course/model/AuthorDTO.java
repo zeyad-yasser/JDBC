@@ -4,10 +4,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.Objects;
-
+@Data
+@ToString
 public class AuthorDTO {
 
     @NotBlank(message = "Author name is required")
@@ -21,40 +24,6 @@ public class AuthorDTO {
     @Past(message = "Birthdate must be in the past")
     private LocalDate authorBirthdate;
 
-    // Getters and setters
-
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
-    }
-
-    public String getAuthorEmail() {
-        return authorEmail;
-    }
-
-    public void setAuthorEmail(String authorEmail) {
-        this.authorEmail = authorEmail;
-    }
-
-    public LocalDate getAuthorBirthdate() {
-        return authorBirthdate;
-    }
-
-    public void setAuthorBirthdate(LocalDate authorBirthdate) {
-        this.authorBirthdate = authorBirthdate;
-    }
-
-    @Override
-    public String toString() {
-        return "AuthorDTO{" +
-                "authorName='" + authorName + '\'' +
-                ", authorEmail='" + authorEmail + '\'' +
-                ", authorBirthdate=" + authorBirthdate +
-                '}';
-    }
 
     @Override
     public boolean equals(Object o) {

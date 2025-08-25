@@ -1,11 +1,14 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+@Data
+@ToString
 @Entity
 @Table(name = "author")
 public class Author {
@@ -35,58 +38,8 @@ public class Author {
     }
     public Author() {}
 
-    public int getAuthorId() {
-        return authorId;
-    }
 
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
-    }
-
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
-    }
-
-    public String getAuthorEmail() {
-        return authorEmail;
-    }
-
-    public void setAuthorEmail(String authorEmail) {
-        this.authorEmail = authorEmail;
-    }
-
-    public LocalDate getAuthorBirthdate() {
-        return authorBirthdate;
-    }
-
-    public void setAuthorBirthdate(LocalDate authorBirthdate) {
-        this.authorBirthdate = authorBirthdate;
-    }
-
-    public List<Course> getCourses() {
-        return courses;
-    }
-
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
-    }
-
-    @Override
-    public String toString() {
-        return "Author{" +
-                "authorId=" + authorId +
-                ", authorName='" + authorName + '\'' +
-                ", authorEmail='" + authorEmail + '\'' +
-                ", authorBirthdate=" + authorBirthdate +
-                ", courses=" + courses +
-                '}';
-    }
-
-    @Override
+   @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Author author = (Author) o;
