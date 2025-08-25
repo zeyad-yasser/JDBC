@@ -6,13 +6,17 @@ import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
-@SpringBootApplication()
+//@SpringBootApplication()
 
-
+@SpringBootApplication
+@EnableJpaRepositories(basePackages = "com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo")
+@EntityScan(basePackages = "com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity")
 public class JdbcTaskCourseApplication {
     public static void main(String[] args) {
         SpringApplication.run(JdbcTaskCourseApplication.class, args);

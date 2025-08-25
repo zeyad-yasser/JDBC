@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class CourseServiceImpl implements CourseService {
+public class CourseServiceImpl  {
 
     private final CourseRepo courseRepo;
     private final CourseMapper mapper;
@@ -32,26 +32,26 @@ public class CourseServiceImpl implements CourseService {
         this.authorRepo = authorRepo;
     }
 
-    @Override
+    //@Override
     public List<Course> getRecommendedCourses() {
         Page<Course> page = courseRepo.findTopRatedCourses(PageRequest.of(0, 10));
         return page.getContent();
     }
 
-    @Override
+    //@Override
     public Course viewCourse(int id) {
         return courseRepo.findById(id)
                 .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
     }
 
-    @Override
+    //@Override
     public CourseDTO getCourseDTO(int id) {
         return courseRepo.findById(id)
                 .map(mapper::toDTO)
                 .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
     }
 
-    @Override
+    //@Override
     @Transactional
     public CourseDTO addCourse(CourseDTO courseDTO) {
 
@@ -63,7 +63,7 @@ public class CourseServiceImpl implements CourseService {
         return mapper.toDTO(saved);
     }
 
-    @Override
+    //@Override
     @Transactional
     public void updateCourse(int id, CourseDTO courseDTO) {
 
@@ -86,7 +86,7 @@ public class CourseServiceImpl implements CourseService {
 
     }
 
-    @Override
+    //@Override
     @Transactional
     public void deleteCourse(int id) {
         if (!courseRepo.existsById(id)) {
@@ -95,13 +95,13 @@ public class CourseServiceImpl implements CourseService {
         courseRepo.deleteById(id);
     }
 
-    @Override
+    //@Override
     public Page<CourseDTO> getCoursesDTOPaginated(int page, int size) {
         Page<Course> p = courseRepo.findAll(PageRequest.of(page, size));
         return p.map(mapper::toDTO);
     }
 
-    @Override
+    //@Override
     public List<CourseDTO> getCoursesDTOByAuthorEmail(String email) {
         return courseRepo.findByAuthorEmail(email).stream()
                 .map(mapper::toDTO)

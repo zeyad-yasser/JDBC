@@ -85,7 +85,7 @@ class CourseServiceImplTest {
 
         // Create test CourseDTO
         testCourseDTO = new CourseDTO();
-        testCourseDTO.setId(1);
+        //testCourseDTO.setId(1);
         testCourseDTO.setName("Java Basics");
         testCourseDTO.setDescription("Introductory course for Java programming.");
         testCourseDTO.setCredit(3);
