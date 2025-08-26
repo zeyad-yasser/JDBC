@@ -2,7 +2,7 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.controllers;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseServiceImpl;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -22,10 +22,10 @@ import java.util.List;
 @Tag(name = "Courses", description = "Course management endpoints")
 public class CourseController {
 
-    private final CourseServiceImpl courseService;
+    private final CourseService courseService;
 
     @Autowired
-    public CourseController(CourseServiceImpl courseService) {
+    public CourseController(CourseService courseService) {
         this.courseService = courseService;
     }
 
@@ -35,8 +35,8 @@ public class CourseController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/discover")
-    public ResponseEntity<List<Course>> discoverCourses() {
-        List<Course> recommendedCourses = courseService.getRecommendedCourses();
+    public ResponseEntity<List<CourseDTO>> discoverCourses() {
+        List<CourseDTO> recommendedCourses = courseService.getRecommendedCourses();
         return ResponseEntity.ok(recommendedCourses);
     }
 

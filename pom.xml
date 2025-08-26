@@ -8,11 +8,13 @@
         <version>3.5.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.sumerge.jdbc.zjdbc_task</groupId>
     <artifactId>jdbc_task_course</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>jdbc_task_course</name>
     <description>Demo project for Spring Boot</description>
+
     <url/>
     <licenses>
         <license/>
@@ -151,4 +153,3 @@
     </build>
 
 </project>
-

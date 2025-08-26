@@ -1,5 +1,6 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Role;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.AppUser;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.AppUserRepository;
 import org.springframework.security.core.userdetails.User;
@@ -25,8 +26,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         return User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword()) // Should be encoded!
-                .roles(user.getRole().replace("ROLE_", "")) // Spring expects role without prefix here
+                .roles(user.getRole().name()) // Spring expects role without prefix here
                 .build();
+    }
+    private String extractRoleName(Role role) {
+        return role.name().replace("ROLE_", ""); // Convert enum name to role name
     }
 }
 

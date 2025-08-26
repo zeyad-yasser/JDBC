@@ -1,15 +1,12 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course;
 
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseServiceImpl;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 //@SpringBootApplication()
@@ -23,7 +20,7 @@ public class JdbcTaskCourseApplication {
     }
 
     @Bean
-    public CommandLineRunner demo(CourseServiceImpl courseService) {
+    public CommandLineRunner demo(CourseService courseService) {
         return args -> {
 
           //CourseDTO course1 = new CourseDTO(null, "Java Programming", "Learn Java from scratch", 3, 1);

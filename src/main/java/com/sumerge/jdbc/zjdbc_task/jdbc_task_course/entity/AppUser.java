@@ -1,5 +1,6 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity;
 
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +22,9 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role; // e.g., "ROLE_ADMIN", "ROLE_USER"
+    private Role role;
+
 
 }

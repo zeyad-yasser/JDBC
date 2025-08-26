@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CourseServiceImplTest {
+class CourseServiceTest {
     @Mock
     private CourseRepo courseRepo;
 
@@ -37,7 +37,7 @@ class CourseServiceImplTest {
     private AuthorRepo authorRepo;
 
     @InjectMocks
-    private CourseServiceImpl courseService;
+    private CourseService courseService;
 
     private Course testCourse;
     private CourseDTO testCourseDTO;

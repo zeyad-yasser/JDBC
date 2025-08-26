@@ -14,6 +14,6 @@ public class UserRegistrationDTO {
     private String password;
 
     @NotBlank
-    private String role; // e.g., "ROLE_USER", "ROLE_ADMIN"
+    private Role role;
 
 }
