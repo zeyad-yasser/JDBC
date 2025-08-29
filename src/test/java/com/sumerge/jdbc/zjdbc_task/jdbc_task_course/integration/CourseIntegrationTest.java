@@ -1,5 +1,6 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.integration;
 
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseRequestDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,17 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.*;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,8 +25,6 @@ import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Author;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Rating;
 
 // DTO imports
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.advice.ErrorResponse;
 
 // Repository imports
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
@@ -55,7 +51,7 @@ class CourseIntegrationTest {
     private String baseUrl;
     private HttpHeaders headers;
     private Author testAuthor;
-    private CourseDTO testCourseDTO;
+    private CourseRequestDTO testCourseRequestDTO;
 
     @BeforeEach
     void setUp() {
@@ -75,21 +71,21 @@ class CourseIntegrationTest {
         testAuthor = authorRepo.saveAndFlush(testAuthor);
 
         // Create test CourseDTO using the generated author ID
-        testCourseDTO = new CourseDTO();
-        testCourseDTO.setName("Integration Test Course");
-        testCourseDTO.setDescription("A course for integration testing");
-        testCourseDTO.setCredit(3);
-        testCourseDTO.setAuthorId(testAuthor.getAuthorId()); // Use generated ID
+        testCourseRequestDTO = new CourseRequestDTO();
+        testCourseRequestDTO.setName("Integration Test Course");
+        testCourseRequestDTO.setDescription("A course for integration testing");
+        testCourseRequestDTO.setCredit(3);
+        testCourseRequestDTO.setAuthorId(testAuthor.getAuthorId()); // Use generated ID
     }
 
     @Test
     void addCourse_WhenValidCourse_ShouldReturnCreatedCourse() {
         // Given
-        HttpEntity<CourseDTO> request = new HttpEntity<>(testCourseDTO, headers);
+        HttpEntity<CourseRequestDTO> request = new HttpEntity<>(testCourseRequestDTO, headers);
 
         // When
-        ResponseEntity<CourseDTO> response = restTemplate.postForEntity(
-                baseUrl, request, CourseDTO.class);
+        ResponseEntity<CourseRequestDTO> response = restTemplate.postForEntity(
+                baseUrl, request, CourseRequestDTO.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -109,12 +105,12 @@ class CourseIntegrationTest {
     @Test
     void addCourse_WhenInvalidCourse_ShouldReturnBadRequest() {
         // Given - invalid course (empty name, invalid credit)
-        CourseDTO invalidCourse = new CourseDTO();
+        CourseRequestDTO invalidCourse = new CourseRequestDTO();
         invalidCourse.setName(""); // Invalid - empty name
         invalidCourse.setCredit(0); // Invalid - less than 1
         invalidCourse.setAuthorId(testAuthor.getAuthorId());
 
-        HttpEntity<CourseDTO> request = new HttpEntity<>(invalidCourse, headers);
+        HttpEntity<CourseRequestDTO> request = new HttpEntity<>(invalidCourse, headers);
 
         // When
         ResponseEntity<String> response = restTemplate.postForEntity(
@@ -135,7 +131,7 @@ class CourseIntegrationTest {
         headersWithoutValidation.setContentType(MediaType.APPLICATION_JSON);
         // Don't set x-validation-report header
 
-        HttpEntity<CourseDTO> request = new HttpEntity<>(testCourseDTO, headersWithoutValidation);
+        HttpEntity<CourseRequestDTO> request = new HttpEntity<>(testCourseRequestDTO, headersWithoutValidation);
 
         // When
         ResponseEntity<String> response = restTemplate.postForEntity(
@@ -156,8 +152,8 @@ class CourseIntegrationTest {
         Course savedCourse = courseRepo.saveAndFlush(course);
 
         // When
-        ResponseEntity<CourseDTO> response = restTemplate.getForEntity(
-                baseUrl + "/" + savedCourse.getId(), CourseDTO.class);
+        ResponseEntity<CourseRequestDTO> response = restTemplate.getForEntity(
+                baseUrl + "/" + savedCourse.getId(), CourseRequestDTO.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

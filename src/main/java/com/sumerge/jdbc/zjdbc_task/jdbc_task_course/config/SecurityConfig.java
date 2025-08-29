@@ -35,6 +35,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers( "/courses/**").authenticated()
+                        //.requestMatchers( "/zozos/**").authenticated()
                         .requestMatchers("/authors/**").authenticated()
                         .requestMatchers("/v3/api-docs").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/auth/login").permitAll()

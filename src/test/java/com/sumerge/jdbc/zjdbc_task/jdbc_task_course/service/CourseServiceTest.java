@@ -7,7 +7,8 @@ import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Rating;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.AuthorNotFoundException;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.CourseNotFoundException;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.CourseMapper;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseRequestDTO;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseResponseDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.AuthorRepo;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ class CourseServiceTest {
     private CourseService courseService;
 
     private Course testCourse;
-    private CourseDTO testCourseDTO;
+    private CourseRequestDTO testCourseRequestDTO;
     private Author testAuthor;
     private List<Assessment> testAssessments;
     private List<Rating> testRatings;
@@ -84,12 +85,12 @@ class CourseServiceTest {
         testCourse.setRatings(testRatings);
 
         // Create test CourseDTO
-        testCourseDTO = new CourseDTO();
+        testCourseRequestDTO = new CourseRequestDTO();
         //testCourseDTO.setId(1);
-        testCourseDTO.setName("Java Basics");
-        testCourseDTO.setDescription("Introductory course for Java programming.");
-        testCourseDTO.setCredit(3);
-        testCourseDTO.setAuthorId(1);
+        testCourseRequestDTO.setName("Java Basics");
+        testCourseRequestDTO.setDescription("Introductory course for Java programming.");
+        testCourseRequestDTO.setCredit(3);
+        testCourseRequestDTO.setAuthorId(1);
     }
 
     //  viewCourse Tests
@@ -161,13 +162,13 @@ class CourseServiceTest {
         savedCourse.setCredit(3);
         savedCourse.setAuthor(testAuthor);
 
-        when(mapper.toEntityForCreate(testCourseDTO)).thenReturn(mappedCourse);
+        when(mapper.toEntityForCreate(testCourseRequestDTO)).thenReturn(mappedCourse);
         when(authorRepo.findById(1)).thenReturn(Optional.of(testAuthor));
         when(courseRepo.save(mappedCourse)).thenReturn(savedCourse);
-        when(mapper.toDTO(savedCourse)).thenReturn(testCourseDTO);
+        when(mapper.toRequestDTO(savedCourse)).thenReturn(testCourseRequestDTO);
 
         // When
-        CourseDTO result = courseService.addCourse(testCourseDTO);
+        CourseResponseDTO result = courseService.addCourse(testCourseRequestDTO);
 
         // Then
         assertNotNull(result);
@@ -176,30 +177,30 @@ class CourseServiceTest {
         assertEquals(3, result.getCredit());
         assertEquals(1, result.getAuthorId());
 
-        verify(mapper, times(1)).toEntityForCreate(testCourseDTO);
+        verify(mapper, times(1)).toEntityForCreate(testCourseRequestDTO);
         verify(authorRepo, times(1)).findById(1);
         verify(courseRepo, times(1)).save(mappedCourse);
-        verify(mapper, times(1)).toDTO(savedCourse);
+        verify(mapper, times(1)).toRequestDTO(savedCourse);
     }
 
     @Test
     void addCourse_WhenAuthorNotFound_ShouldThrowAuthorNotFoundException() {
         // Given
         Course mappedCourse = new Course();
-        when(mapper.toEntityForCreate(testCourseDTO)).thenReturn(mappedCourse);
+        when(mapper.toEntityForCreate(testCourseRequestDTO)).thenReturn(mappedCourse);
         when(authorRepo.findById(1)).thenReturn(Optional.empty());
 
         // When & Then
         AuthorNotFoundException exception = assertThrows(
                 AuthorNotFoundException.class,
-                () -> courseService.addCourse(testCourseDTO)
+                () -> courseService.addCourse(testCourseRequestDTO)
         );
 
         assertEquals("Author with ID: 1 not found", exception.getMessage());
-        verify(mapper, times(1)).toEntityForCreate(testCourseDTO);
+        verify(mapper, times(1)).toEntityForCreate(testCourseRequestDTO);
         verify(authorRepo, times(1)).findById(1);
         verify(courseRepo, never()).save(any());
-        verify(mapper, never()).toDTO(any());
+        verify(mapper, never()).toRequestDTO(any());
     }
 
     //  updateCourse Tests
@@ -217,11 +218,11 @@ class CourseServiceTest {
         when(courseRepo.save(existingCourse)).thenReturn(existingCourse);
 
         // When
-        courseService.updateCourse(courseId, testCourseDTO);
+        courseService.updateCourse(courseId, testCourseRequestDTO);
 
         // Then
         verify(courseRepo, times(1)).findById(courseId);
-        verify(mapper, times(1)).updateCourseFromDTO(testCourseDTO, existingCourse);
+        verify(mapper, times(1)).updateCourseFromDTO(testCourseRequestDTO, existingCourse);
         verify(authorRepo, times(1)).findById(1);
         verify(courseRepo, times(1)).save(existingCourse);
         assertEquals(testAuthor, existingCourse.getAuthor());
@@ -236,7 +237,7 @@ class CourseServiceTest {
         // When & Then
         CourseNotFoundException exception = assertThrows(
                 CourseNotFoundException.class,
-                () -> courseService.updateCourse(nonExistentCourseId, testCourseDTO)
+                () -> courseService.updateCourse(nonExistentCourseId, testCourseRequestDTO)
         );
 
         assertEquals("Course with ID: " + nonExistentCourseId + " not found", exception.getMessage());

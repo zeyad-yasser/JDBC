@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.Objects;
 
 @Data
-public class CourseDTO {
+public class CourseRequestDTO {
 
    // private Integer id;
 
@@ -22,22 +22,22 @@ public class CourseDTO {
 
     private int authorId;
 
-    public CourseDTO(/*Integer id,*/ String name, String description, int credit, int authorId) {
+    public CourseRequestDTO(/*Integer id,*/ String name, String description, int credit, int authorId) {
     //    this.id = id;
         this.name = name;
         this.description = description;
         this.credit = credit;
         this.authorId = authorId;
     }
-    public CourseDTO() {
+    public CourseRequestDTO() {
         // Default constructor for testing and serialization
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        CourseDTO courseDTO = (CourseDTO) o;
-        return credit == courseDTO.credit && authorId == courseDTO.authorId &&  Objects.equals(name, courseDTO.name) && Objects.equals(description, courseDTO.description);
+        CourseRequestDTO courseRequestDTO = (CourseRequestDTO) o;
+        return credit == courseRequestDTO.credit && authorId == courseRequestDTO.authorId &&  Objects.equals(name, courseRequestDTO.name) && Objects.equals(description, courseRequestDTO.description);
     }
 
     @Override

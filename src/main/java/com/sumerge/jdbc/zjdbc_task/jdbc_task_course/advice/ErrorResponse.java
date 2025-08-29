@@ -64,14 +64,11 @@ public class ErrorResponse {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                "Validation Failed",
-                "Request validation failed",
-                path,
-                validationErrors
+                "Validation Failed", "Request validation failed", path, validationErrors
         );
     }
 
-    // Static factory method for general errors The rest of them
+    // Static factory method for general errors, The rest of them
     public static ErrorResponse generalError(int status, String error, String message, String path) {
         return new ErrorResponse(
                 LocalDateTime.now(),

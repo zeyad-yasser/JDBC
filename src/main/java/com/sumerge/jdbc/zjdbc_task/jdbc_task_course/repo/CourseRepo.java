@@ -1,17 +1,19 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+//import org.springframework.data.rest.core.annotation.RepositoryRestResourcd;
 
 import java.util.List;
 
 @Repository
+//@RepositoryRestResource(path="zozos")
 public interface CourseRepo extends JpaRepository<Course, Integer> {
 
 
@@ -25,12 +27,15 @@ public interface CourseRepo extends JpaRepository<Course, Integer> {
     JOIN rating r ON c.id = r.course_id
 """, nativeQuery = true)
     Page<Course> findTopRatedCourses(Pageable pageable);
-    @Query(value = """
-    SELECT new com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO(c.name, c.description, c.credit, c.author.authorId)
+
+
+
+       @Query(value = """
+    SELECT new com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseRequestDTO(c.name, c.description, c.credit, c.author.authorId)
     FROM Course c JOIN c.author a 
     WHERE a.authorEmail = :email
 """)
-    List<CourseDTO> findByAuthorEmail(@Param("email") String email);
+    List<CourseRequestDTO> findByAuthorEmail(@Param("email") String email);
 
 
 }

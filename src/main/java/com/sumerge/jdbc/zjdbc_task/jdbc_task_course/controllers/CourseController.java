@@ -1,7 +1,7 @@
 package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.controllers;
 
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseDTO;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseRequestDTO;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseResponseDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,9 +34,10 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved recommended courses"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    // ResponseDTO
     @GetMapping("/discover")
-    public ResponseEntity<List<CourseDTO>> discoverCourses() {
-        List<CourseDTO> recommendedCourses = courseService.getRecommendedCourses();
+    public ResponseEntity<List<CourseResponseDTO>> discoverCourses() {
+        List<CourseResponseDTO> recommendedCourses = courseService.getRecommendedCourses();
         return ResponseEntity.ok(recommendedCourses);
     }
 
@@ -45,10 +46,11 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved course"),
             @ApiResponse(responseCode = "404", description = "Course not found")
     })
+   //ResponseDTO
     @GetMapping("/{id}")
-    public ResponseEntity<CourseDTO> viewCourse(@PathVariable int id) {
-        CourseDTO courseDTO = courseService.getCourseDTO(id);
-        return ResponseEntity.ok(courseDTO);
+    public ResponseEntity<CourseResponseDTO> viewCourse(@PathVariable int id) {
+        CourseResponseDTO courseResponseDTO = courseService.getCourseDTO(id);
+        return ResponseEntity.ok(courseResponseDTO);
     }
 
     @Operation(summary = "Add a new course", description = "Creates a new course with the provided details")
@@ -63,8 +65,8 @@ public class CourseController {
     }*/
 
     @PostMapping
-    public ResponseEntity<CourseDTO> addCourse(@Valid @RequestBody CourseDTO courseDTO) {
-        CourseDTO saved = courseService.addCourse(courseDTO);
+    public ResponseEntity<CourseResponseDTO> addCourse(@Valid @RequestBody CourseRequestDTO courseRequestDTO) {
+        CourseResponseDTO saved = courseService.addCourse(courseRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
@@ -75,9 +77,9 @@ public class CourseController {
             @ApiResponse(responseCode = "404", description = "Course not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCourse(@PathVariable int id, @Valid @RequestBody CourseDTO courseDTO) {
-        courseService.updateCourse(id, courseDTO);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CourseResponseDTO> updateCourse(@PathVariable int id, @Valid @RequestBody CourseRequestDTO courseRequestDTO) {
+        courseService.updateCourse(id, courseRequestDTO);
+        return ResponseEntity.ok().body(courseService.getCourseDTO(id));
     }
 
     @Operation(summary = "Delete a course", description = "Deletes the course with the given ID")
@@ -96,10 +98,10 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved courses")
     })
     @GetMapping
-    public ResponseEntity<Page<CourseDTO>> getCourses(
+    public ResponseEntity<Page<CourseRequestDTO>> getCourses(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<CourseDTO> courseDTOs = courseService.getCoursesDTOPaginated(page, size);
+        Page<CourseRequestDTO> courseDTOs = courseService.getCoursesDTOPaginated(page, size);
         return ResponseEntity.ok(courseDTOs);
     }
 
@@ -108,9 +110,9 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved courses")
     })
     @GetMapping("/author")
-    public ResponseEntity<List<CourseDTO>> getCoursesByAuthorEmail(@RequestParam @Email String email) {
-        List<CourseDTO> courseDTOs = courseService.getCoursesDTOByAuthorEmail(email);
-        return ResponseEntity.ok(courseDTOs);
+    public ResponseEntity<List<CourseRequestDTO>> getCoursesByAuthorEmail(@RequestParam @Email String email) {
+        List<CourseRequestDTO> courseRequestDTOS = courseService.getCoursesDTOByAuthorEmail(email);
+        return ResponseEntity.ok(courseRequestDTOS);
     }
 
 
