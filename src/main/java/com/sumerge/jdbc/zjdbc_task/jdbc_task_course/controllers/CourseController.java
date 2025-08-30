@@ -9,10 +9,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/courses")
 @Tag(name = "Courses", description = "Course management endpoints")
+@Validated
 public class CourseController {
 
     private final CourseService courseService;
@@ -77,7 +80,7 @@ public class CourseController {
             @ApiResponse(responseCode = "404", description = "Course not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<CourseResponseDTO> updateCourse(@PathVariable int id, @Valid @RequestBody CourseRequestDTO courseRequestDTO) {
+    public ResponseEntity<CourseResponseDTO> updateCourse(@Valid @PathVariable int id, @Valid @RequestBody CourseRequestDTO courseRequestDTO) {
         courseService.updateCourse(id, courseRequestDTO);
         return ResponseEntity.ok().body(courseService.getCourseDTO(id));
     }
@@ -98,10 +101,10 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved courses")
     })
     @GetMapping
-    public ResponseEntity<Page<CourseRequestDTO>> getCourses(
+    public ResponseEntity<Page<CourseResponseDTO>> getCourses(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<CourseRequestDTO> courseDTOs = courseService.getCoursesDTOPaginated(page, size);
+        Page<CourseResponseDTO> courseDTOs = courseService.getCoursesDTOPaginated(page, size);
         return ResponseEntity.ok(courseDTOs);
     }
 
@@ -110,9 +113,9 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved courses")
     })
     @GetMapping("/author")
-    public ResponseEntity<List<CourseRequestDTO>> getCoursesByAuthorEmail(@RequestParam @Email String email) {
-        List<CourseRequestDTO> courseRequestDTOS = courseService.getCoursesDTOByAuthorEmail(email);
-        return ResponseEntity.ok(courseRequestDTOS);
+    public ResponseEntity<List<CourseResponseDTO>> getCoursesByAuthorEmail( @RequestParam @NotBlank @Email String email) {
+        List<CourseResponseDTO> courseResponseDTOS = courseService.getCoursesDTOByAuthorEmail(email);
+        return ResponseEntity.ok(courseResponseDTOS);
     }
 
 

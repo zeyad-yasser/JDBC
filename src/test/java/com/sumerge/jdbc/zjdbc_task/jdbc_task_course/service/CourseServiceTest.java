@@ -90,7 +90,7 @@ class CourseServiceTest {
         testCourseRequestDTO.setName("Java Basics");
         testCourseRequestDTO.setDescription("Introductory course for Java programming.");
         testCourseRequestDTO.setCredit(3);
-        testCourseRequestDTO.setAuthorId(1);
+        testCourseRequestDTO.setAuthorIds(1);
     }
 
     //  viewCourse Tests

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -71,9 +72,11 @@ public class CourseService {
     public CourseResponseDTO addCourse(CourseRequestDTO courseRequestDTO) {
 
         Course course = mapper.toEntityForCreate(courseRequestDTO);
-        Author author = authorRepo.findById(courseRequestDTO.getAuthorId())
-                .orElseThrow(()-> new AuthorNotFoundException("Author with ID: " + courseRequestDTO.getAuthorId() + " not found"));
-        course.setAuthor(author);
+        List<Author> authors = authorRepo.findAllById(courseRequestDTO.getAuthorIds());
+       if(authors.isEmpty()) {
+           throw new AuthorNotFoundException("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
+       }
+        course.setAuthors(authors);
         Course saved = courseRepo.save(course);
         return mapper.toResponseDTO(saved);
     }
@@ -85,8 +88,12 @@ public class CourseService {
         Course existing = courseRepo.findById(id).orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
         mapper.updateCourseFromDTO(courseRequestDTO, existing);
 
-        Author author = authorRepo.findById(courseRequestDTO.getAuthorId()).orElseThrow(()->new AuthorNotFoundException("Author with ID: " + courseRequestDTO.getAuthorId() + " not found"));
-        existing.setAuthor(author);
+        List<Author> authors = authorRepo.findAllById(courseRequestDTO.getAuthorIds());
+        if (authors.isEmpty()){
+            throw new AuthorNotFoundException("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
+        }
+
+        existing.setAuthors(authors);
 
        courseRepo.save(existing);
        return  mapper.toResponseDTO(existing);
@@ -101,12 +108,24 @@ public class CourseService {
         courseRepo.deleteById(id);
     }
 
-    public Page<CourseRequestDTO> getCoursesDTOPaginated(int page, int size) {
+    public Page<CourseResponseDTO> getCoursesDTOPaginated(int page, int size) {
         Page<Course> p = courseRepo.findAll(PageRequest.of(page, size));
-        return p.map(mapper::toRequestDTO);
+        return p.map(mapper::toResponseDTO);
     }
 
-    public List<CourseRequestDTO> getCoursesDTOByAuthorEmail(String email) {
-        return courseRepo.findByAuthorEmail(email);
+    public List<CourseResponseDTO> getCoursesDTOByAuthorEmail(String email) {
+        List<Course> courses = courseRepo.findByAuthorEmail(email);
+
+        return courses.stream()
+                .map(course -> new CourseResponseDTO(
+                        course.getId(),
+                        course.getName(),
+                        course.getDescription(),
+                        course.getCredit(),
+                        course.getAuthors().stream()
+                                .map(Author::getAuthorId)
+                                .toList()
+                ))
+                .toList();
     }
 }

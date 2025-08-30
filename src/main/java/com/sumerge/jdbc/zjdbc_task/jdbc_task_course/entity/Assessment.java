@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.ToString;
 
 @Data
-@ToString
 @Entity
 @Table(name = "assessment")
 public class Assessment {
@@ -16,7 +15,7 @@ public class Assessment {
 
     private String content;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "courseId", nullable = false)
     private Course course;
 

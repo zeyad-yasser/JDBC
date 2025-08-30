@@ -2,6 +2,7 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseRequestDTO;
+import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,11 +32,10 @@ public interface CourseRepo extends JpaRepository<Course, Integer> {
 
 
        @Query(value = """
-    SELECT new com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseRequestDTO(c.name, c.description, c.credit, c.author.authorId)
-    FROM Course c JOIN c.author a 
-    WHERE a.authorEmail = :email
+    SELECT c FROM Course c JOIN c.authors a WHERE a.authorEmail = :email
+                               
 """)
-    List<CourseRequestDTO> findByAuthorEmail(@Param("email") String email);
+    List<Course> findByAuthorEmail(@Param("email") String email);
 
 
 }

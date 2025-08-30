@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 @Data
-@ToString
 @Entity
 @Table(name = "author")
 public class Author {
@@ -26,7 +25,7 @@ public class Author {
     @Column(name= "author_birthdate", nullable = false)
     private LocalDate authorBirthdate;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "authors" )
     private List<Course> courses = new ArrayList<>();
 
     public Author(int authorId, String authorName, String authorEmail, LocalDate authorBirthdate, List<Course> courses) {

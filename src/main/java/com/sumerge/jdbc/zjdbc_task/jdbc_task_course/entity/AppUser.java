@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @EqualsAndHashCode
-@ToString
 @Data
 @Entity
 @Table(name = "users")

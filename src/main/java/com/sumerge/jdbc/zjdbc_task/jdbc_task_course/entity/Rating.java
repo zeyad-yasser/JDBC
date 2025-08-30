@@ -6,7 +6,6 @@ import lombok.ToString;
 
 @Entity
 @Data
-@ToString
 @Table(name = "rating")
 public class Rating {
 

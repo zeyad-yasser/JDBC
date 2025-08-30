@@ -5,6 +5,7 @@ import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.AuthorNotFoundExce
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.AuthorMapper;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.AuthorDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.AuthorRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class AuthorService {
     public List<AuthorDTO> getAllAuthors() {
         return authorRepo.findAll().stream()
                 .map(authorMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public AuthorDTO getAuthorById(int id) {
@@ -34,7 +35,7 @@ public class AuthorService {
                 .map(authorMapper::toDto)
                 .orElseThrow(() -> new AuthorNotFoundException("Author not found with id: " + id));
     }
-
+@Transactional
     public AuthorDTO createAuthor(AuthorDTO dto) {
         Author saved = authorRepo.save(authorMapper.toEntity(dto));
         return authorMapper.toDto(saved);

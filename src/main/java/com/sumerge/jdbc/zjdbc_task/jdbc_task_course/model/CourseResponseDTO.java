@@ -6,9 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Objects;
 
-@ToString
 @Data
 public class CourseResponseDTO {
     private Integer id;
@@ -22,27 +22,17 @@ public class CourseResponseDTO {
     @Min(value = 1, message = "Credit must be at least 1")
     private int credit;
 
-    private int authorId;
-    public CourseResponseDTO(Integer id, String name, String description, int credit, int authorId) {
-        //    this.id = id;
-        this.name = name;
-        this.description = description;
-        this.credit = credit;
-        this.authorId = authorId;
-    }
+    private List<Integer> authorIds;
+
     public CourseResponseDTO() {
         // Default constructor for testing and serialization
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        CourseResponseDTO that = (CourseResponseDTO) o;
-        return credit == that.credit && authorId == that.authorId && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, description, credit, authorId);
+    public CourseResponseDTO(Integer id, String name, String description, int credit, List<Integer> authorIds) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.credit = credit;
+        this.authorIds = authorIds;
     }
 }

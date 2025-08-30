@@ -75,7 +75,7 @@ class CourseIntegrationTest {
         testCourseRequestDTO.setName("Integration Test Course");
         testCourseRequestDTO.setDescription("A course for integration testing");
         testCourseRequestDTO.setCredit(3);
-        testCourseRequestDTO.setAuthorId(testAuthor.getAuthorId()); // Use generated ID
+        testCourseRequestDTO.setAuthorIds(testAuthor.getAuthorId()); // Use generated ID
     }
 
     @Test
@@ -93,7 +93,7 @@ class CourseIntegrationTest {
         assertThat(response.getBody().getName()).isEqualTo("Integration Test Course");
         assertThat(response.getBody().getDescription()).isEqualTo("A course for integration testing");
         assertThat(response.getBody().getCredit()).isEqualTo(3);
-        assertThat(response.getBody().getAuthorId()).isEqualTo(testAuthor.getAuthorId());
+        assertThat(response.getBody().getAuthorIds()).isEqualTo(testAuthor.getAuthorId());
 
         // Verify in database - course should exist
         Optional<Course> courseInDb = courseRepo.findById(1); // Assuming first course
@@ -108,7 +108,7 @@ class CourseIntegrationTest {
         CourseRequestDTO invalidCourse = new CourseRequestDTO();
         invalidCourse.setName(""); // Invalid - empty name
         invalidCourse.setCredit(0); // Invalid - less than 1
-        invalidCourse.setAuthorId(testAuthor.getAuthorId());
+        invalidCourse.setAuthorIds(testAuthor.getAuthorId());
 
         HttpEntity<CourseRequestDTO> request = new HttpEntity<>(invalidCourse, headers);
 
@@ -159,7 +159,7 @@ class CourseIntegrationTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getName()).isEqualTo("Test Course for Get");
-        assertThat(response.getBody().getAuthorId()).isEqualTo(testAuthor.getAuthorId());
+        assertThat(response.getBody().getAuthorIds()).isEqualTo(testAuthor.getAuthorId());
     }
 
     @Test
