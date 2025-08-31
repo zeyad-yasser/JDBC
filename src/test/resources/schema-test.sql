@@ -1,25 +1,23 @@
 -- ==============================================
--- ORIGINAL SCHEMA (UNCHANGED)
+-- H2-COMPATIBLE SCHEMA FOR TESTING
 -- ==============================================
 
--- Author table (NO CHANGES)
+-- Author table (UPDATED COLUMN NAMES TO MATCH ENTITY)
 CREATE TABLE IF NOT EXISTS author (
                                       author_id INT PRIMARY KEY AUTO_INCREMENT,
-                                      name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    birthdate DATE NOT NULL
+                                      author_name VARCHAR(255) NOT NULL,
+    author_email VARCHAR(255) NOT NULL,
+    author_birthdate DATE NOT NULL
     );
 
 -- Course table (NO CHANGES - keeping author_id for backward compatibility)
-CREATE TABLE IF NOT EXISTS course (
-                                      id INT PRIMARY KEY AUTO_INCREMENT,
-                                      name VARCHAR(100) NOT NULL,
-    description VARCHAR(255),
-    credit INT NOT NULL,
-    author_id INT NOT NULL,
-    FOREIGN KEY (author_id) REFERENCES author(author_id)
-    );
-
+CREATE TABLE course (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL,
+                        description VARCHAR(255),
+                        credit INT
+    -- ⚠️ no author_id here anymore
+);
 -- Rating table (NO CHANGES)
 CREATE TABLE IF NOT EXISTS rating (
                                       id INT PRIMARY KEY AUTO_INCREMENT,
@@ -49,20 +47,12 @@ CREATE TABLE IF NOT EXISTS users (
 -- ==============================================
 
 -- NEW: Course-Author join table (ONLY ADDITION)
-CREATE TABLE IF NOT EXISTS course_author (
-                                             course_id INT NOT NULL,
-                                             author_id INT NOT NULL,
-                                             PRIMARY KEY (course_id, author_id),
-    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
-    FOREIGN KEY (author_id) REFERENCES author(author_id) ON DELETE CASCADE
-    );
+CREATE TABLE course_author (
+                               course_id BIGINT NOT NULL,
+                               author_id BIGINT NOT NULL,
+                               PRIMARY KEY (course_id, author_id),
+                               CONSTRAINT fk_ca_course FOREIGN KEY (course_id) REFERENCES course(id),
+                               CONSTRAINT fk_ca_author FOREIGN KEY (author_id) REFERENCES author(author_id)
+);
 
--- ==============================================
--- POPULATE JOIN TABLE WITH EXISTING DATA
--- ==============================================
 
--- Auto-populate join table from existing course.author_id relationships
-INSERT IGNORE INTO course_author (course_id, author_id)
-SELECT id, author_id
-FROM course
-WHERE author_id IS NOT NULL;

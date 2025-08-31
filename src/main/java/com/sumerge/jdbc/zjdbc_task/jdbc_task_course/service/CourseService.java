@@ -76,22 +76,24 @@ public class CourseService {
        if(authors.isEmpty()) {
            throw new AuthorNotFoundException("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
        }
-        course.setAuthors(authors);
+        for (Author author : authors) {
+            course.addAuthor(author);
+        }
         Course saved = courseRepo.save(course);
         return mapper.toResponseDTO(saved);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = AuthorNotFoundException.class)
     public CourseResponseDTO updateCourse(int id, CourseRequestDTO courseRequestDTO) {
 
         //look up @mappingtarget
         Course existing = courseRepo.findById(id).orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
-        mapper.updateCourseFromDTO(courseRequestDTO, existing);
 
         List<Author> authors = authorRepo.findAllById(courseRequestDTO.getAuthorIds());
         if (authors.isEmpty()){
             throw new AuthorNotFoundException("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
         }
+        mapper.updateCourseFromDTO(courseRequestDTO, existing);
 
         existing.setAuthors(authors);
 
@@ -102,10 +104,16 @@ public class CourseService {
 
     @Transactional
     public void deleteCourse(int id) {
-        if (!courseRepo.existsById(id)) {
-            throw new CourseNotFoundException("Course with ID: " + id + " not found");
+        Course course = courseRepo.findById(id)
+                .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
+
+        // Remove relationship from authors
+        for (Author author : course.getAuthors()) {
+            author.getCourses().remove(course);
         }
-        courseRepo.deleteById(id);
+        course.getAuthors().clear();
+
+        courseRepo.delete(course);
     }
 
     public Page<CourseResponseDTO> getCoursesDTOPaginated(int page, int size) {

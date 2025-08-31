@@ -2,8 +2,6 @@ package com.sumerge.jdbc.zjdbc_task.jdbc_task_course.service;
 
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Author;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Assessment;
-import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Rating;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.AuthorNotFoundException;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.exception.CourseNotFoundException;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.mapper.CourseMapper;
@@ -12,22 +10,29 @@ import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseResponseDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.AuthorRepo;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo.CourseRepo;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("CourseService Unit Tests")
 class CourseServiceTest {
+
     @Mock
     private CourseRepo courseRepo;
 
@@ -40,216 +45,230 @@ class CourseServiceTest {
     @InjectMocks
     private CourseService courseService;
 
-    private Course testCourse;
-    private CourseRequestDTO testCourseRequestDTO;
-    private Author testAuthor;
-    private List<Assessment> testAssessments;
-    private List<Rating> testRatings;
+    private Course course;
+    private CourseRequestDTO courseRequestDTO;
+    private CourseResponseDTO courseResponseDTO;
+    private Author author;
 
     @BeforeEach
     void setUp() {
-        // Create test author
-        testAuthor = new Author();
-        testAuthor.setAuthorId(1);
-        testAuthor.setAuthorName("Zeyad Yasser");
-        testAuthor.setAuthorEmail("zeyad.yasser@example.com");
-        testAuthor.setAuthorBirthdate(LocalDate.of(1980, 1, 1));
+        // Setup Author
+        author = new Author();
+        author.setAuthorId(1);
+        author.setAuthorName("John Doe");
+        author.setAuthorEmail("john.doe@example.com");
+        author.setAuthorBirthdate(LocalDate.of(1980, 1, 1));
 
-        // Create test assessments
-        testAssessments = new ArrayList<>();
-        Assessment assessment = new Assessment();
-        assessment.setId(1L);
-        assessment.setContent("Final Exam - Java Basics");
-        testAssessments.add(assessment);
+        // Setup Course
+        course = new Course();
+        course.setId(1);
+        course.setName("Java Programming");
+        course.setDescription("Learn Java from scratch");
+        course.setCredit(3);
+        course.setAuthors(Arrays.asList(author));
 
-        // Create test ratings
-        testRatings = new ArrayList<>();
-        Rating rating1 = new Rating();
-        rating1.setId(1L);
-        rating1.setNumber(5);
-        testRatings.add(rating1);
+        // Setup DTOs
+        courseRequestDTO = new CourseRequestDTO();
+        courseRequestDTO.setName("Java Programming");
+        courseRequestDTO.setDescription("Learn Java from scratch");
+        courseRequestDTO.setCredit(3);
+        courseRequestDTO.setAuthorIds(Arrays.asList(1));
 
-        Rating rating2 = new Rating();
-        rating2.setId(2L);
-        rating2.setNumber(4);
-        testRatings.add(rating2);
-
-        // Create test course
-        testCourse = new Course();
-        testCourse.setId(1);
-        testCourse.setName("Java Basics");
-        testCourse.setDescription("Introductory course for Java programming.");
-        testCourse.setCredit(3);
-        testCourse.setAuthor(testAuthor);
-        testCourse.setAssessments(testAssessments);
-        testCourse.setRatings(testRatings);
-
-        // Create test CourseDTO
-        testCourseRequestDTO = new CourseRequestDTO();
-        //testCourseDTO.setId(1);
-        testCourseRequestDTO.setName("Java Basics");
-        testCourseRequestDTO.setDescription("Introductory course for Java programming.");
-        testCourseRequestDTO.setCredit(3);
-        testCourseRequestDTO.setAuthorIds(1);
+        courseResponseDTO = new CourseResponseDTO();
+        courseResponseDTO.setId(1);
+        courseResponseDTO.setName("Java Programming");
+        courseResponseDTO.setDescription("Learn Java from scratch");
+        courseResponseDTO.setCredit(3);
+        courseResponseDTO.setAuthorIds(Arrays.asList(1));
     }
 
-    //  viewCourse Tests
     @Test
-    void viewCourse_WhenCourseExists_ShouldReturnCourse() {
+    @DisplayName("Should return all recommended courses")
+    void getRecommendedCourses_ShouldReturnAllCourses() {
+        // Given
+        List<Course> courses = Arrays.asList(course);
+        List<CourseResponseDTO> expectedDTOs = Arrays.asList(courseResponseDTO);
+
+        when(courseRepo.findAll()).thenReturn(courses);
+        when(mapper.toDTOList(courses)).thenReturn(expectedDTOs);
+
+        // When
+        List<CourseResponseDTO> result = courseService.getRecommendedCourses();
+
+        // Then
+        assertThat(result).hasSize(1);
+        assertThat(result).isEqualTo(expectedDTOs);
+        verify(courseRepo).findAll();
+        verify(mapper).toDTOList(courses);
+    }
+
+    @Test
+    @DisplayName("Should return course by ID successfully")
+    void viewCourse_ShouldReturnCourse_WhenCourseExists() {
         // Given
         int courseId = 1;
-        when(courseRepo.findById(courseId)).thenReturn(Optional.of(testCourse));
+        when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
 
         // When
         Course result = courseService.viewCourse(courseId);
 
         // Then
-        assertNotNull(result);
-        assertEquals(courseId, result.getId());
-        assertEquals("Java Basics", result.getName());
-        assertEquals("Introductory course for Java programming.", result.getDescription());
-        assertEquals(3, result.getCredit());
-
-        // Verify author details
-        assertNotNull(result.getAuthor());
-        assertEquals("Zeyad Yasser", result.getAuthor().getAuthorName());
-        assertEquals("zeyad.yasser@example.com", result.getAuthor().getAuthorEmail());
-
-        // Verify assessments
-        assertNotNull(result.getAssessments());
-        assertEquals(1, result.getAssessments().size());
-        assertEquals("Final Exam - Java Basics", result.getAssessments().get(0).getContent());
-
-        // Verify ratings
-        assertNotNull(result.getRatings());
-        assertEquals(2, result.getRatings().size());
-        assertEquals(5, result.getRatings().get(0).getNumber());
-        assertEquals(4, result.getRatings().get(1).getNumber());
-
-        // Verify repository method was called exactly once
-        verify(courseRepo, times(1)).findById(courseId);
+        assertThat(result).isEqualTo(course);
+        verify(courseRepo).findById(courseId);
     }
 
     @Test
-    void viewCourse_WhenCourseDoesNotExist_ShouldThrowCourseNotFoundException() {
+    @DisplayName("Should throw CourseNotFoundException when course does not exist")
+    void viewCourse_ShouldThrowException_WhenCourseDoesNotExist() {
         // Given
-        int nonExistentCourseId = 999;
-        when(courseRepo.findById(nonExistentCourseId)).thenReturn(Optional.empty());
+        int courseId = 999;
+        when(courseRepo.findById(courseId)).thenReturn(Optional.empty());
 
         // When & Then
-        CourseNotFoundException exception = assertThrows(
-                CourseNotFoundException.class,
-                () -> courseService.viewCourse(nonExistentCourseId)
-        );
+        assertThatThrownBy(() -> courseService.viewCourse(courseId))
+                .isInstanceOf(CourseNotFoundException.class)
+                .hasMessage("Course with ID: " + courseId + " not found");
 
-        assertEquals("Course with ID: " + nonExistentCourseId + " not found", exception.getMessage());
-        verify(courseRepo, times(1)).findById(nonExistentCourseId);
-    }
-
-    //  addCourse Tests
-    @Test
-    void addCourse_WhenValidCourseDTO_ShouldReturnSavedCourseDTO() {
-        // Given
-        Course mappedCourse = new Course();
-        mappedCourse.setName("Java Basics");
-        mappedCourse.setDescription("Introductory course for Java programming.");
-        mappedCourse.setCredit(3);
-
-        Course savedCourse = new Course();
-        savedCourse.setId(1);
-        savedCourse.setName("Java Basics");
-        savedCourse.setDescription("Introductory course for Java programming.");
-        savedCourse.setCredit(3);
-        savedCourse.setAuthor(testAuthor);
-
-        when(mapper.toEntityForCreate(testCourseRequestDTO)).thenReturn(mappedCourse);
-        when(authorRepo.findById(1)).thenReturn(Optional.of(testAuthor));
-        when(courseRepo.save(mappedCourse)).thenReturn(savedCourse);
-        when(mapper.toRequestDTO(savedCourse)).thenReturn(testCourseRequestDTO);
-
-        // When
-        CourseResponseDTO result = courseService.addCourse(testCourseRequestDTO);
-
-        // Then
-        assertNotNull(result);
-        assertEquals("Java Basics", result.getName());
-        assertEquals("Introductory course for Java programming.", result.getDescription());
-        assertEquals(3, result.getCredit());
-        assertEquals(1, result.getAuthorId());
-
-        verify(mapper, times(1)).toEntityForCreate(testCourseRequestDTO);
-        verify(authorRepo, times(1)).findById(1);
-        verify(courseRepo, times(1)).save(mappedCourse);
-        verify(mapper, times(1)).toRequestDTO(savedCourse);
+        verify(courseRepo).findById(courseId);
     }
 
     @Test
-    void addCourse_WhenAuthorNotFound_ShouldThrowAuthorNotFoundException() {
-        // Given
-        Course mappedCourse = new Course();
-        when(mapper.toEntityForCreate(testCourseRequestDTO)).thenReturn(mappedCourse);
-        when(authorRepo.findById(1)).thenReturn(Optional.empty());
-
-        // When & Then
-        AuthorNotFoundException exception = assertThrows(
-                AuthorNotFoundException.class,
-                () -> courseService.addCourse(testCourseRequestDTO)
-        );
-
-        assertEquals("Author with ID: 1 not found", exception.getMessage());
-        verify(mapper, times(1)).toEntityForCreate(testCourseRequestDTO);
-        verify(authorRepo, times(1)).findById(1);
-        verify(courseRepo, never()).save(any());
-        verify(mapper, never()).toRequestDTO(any());
-    }
-
-    //  updateCourse Tests
-
-    @Test
-    void updateCourse_WhenValidCourseAndAuthorExist_ShouldUpdateSuccessfully() {
+    @DisplayName("Should return course DTO by ID successfully")
+    void getCourseDTO_ShouldReturnCourseDTO_WhenCourseExists() {
         // Given
         int courseId = 1;
-        Course existingCourse = new Course();
-        existingCourse.setId(courseId);
-        existingCourse.setName("Old Name");
-
-        when(courseRepo.findById(courseId)).thenReturn(Optional.of(existingCourse));
-        when(authorRepo.findById(1)).thenReturn(Optional.of(testAuthor));
-        when(courseRepo.save(existingCourse)).thenReturn(existingCourse);
+        when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
+        when(mapper.toResponseDTO(course)).thenReturn(courseResponseDTO);
 
         // When
-        courseService.updateCourse(courseId, testCourseRequestDTO);
+        CourseResponseDTO result = courseService.getCourseDTO(courseId);
 
         // Then
-        verify(courseRepo, times(1)).findById(courseId);
-        verify(mapper, times(1)).updateCourseFromDTO(testCourseRequestDTO, existingCourse);
-        verify(authorRepo, times(1)).findById(1);
-        verify(courseRepo, times(1)).save(existingCourse);
-        assertEquals(testAuthor, existingCourse.getAuthor());
+        assertThat(result).isEqualTo(courseResponseDTO);
+        verify(courseRepo).findById(courseId);
+        verify(mapper).toResponseDTO(course);
     }
 
     @Test
-    void updateCourse_WhenCourseNotFound_ShouldThrowCourseNotFoundException() {
+    @DisplayName("Should throw CourseNotFoundException when getting DTO for non-existent course")
+    void getCourseDTO_ShouldThrowException_WhenCourseDoesNotExist() {
         // Given
-        int nonExistentCourseId = 999;
-        when(courseRepo.findById(nonExistentCourseId)).thenReturn(Optional.empty());
+        int courseId = 999;
+        when(courseRepo.findById(courseId)).thenReturn(Optional.empty());
 
         // When & Then
-        CourseNotFoundException exception = assertThrows(
-                CourseNotFoundException.class,
-                () -> courseService.updateCourse(nonExistentCourseId, testCourseRequestDTO)
-        );
+        assertThatThrownBy(() -> courseService.getCourseDTO(courseId))
+                .isInstanceOf(CourseNotFoundException.class)
+                .hasMessage("Course with ID: " + courseId + " not found");
 
-        assertEquals("Course with ID: " + nonExistentCourseId + " not found", exception.getMessage());
-        verify(courseRepo, times(1)).findById(nonExistentCourseId);
-        verify(mapper, never()).updateCourseFromDTO(any(), any());
-        verify(authorRepo, never()).findById(any());
+        verify(courseRepo).findById(courseId);
+        verifyNoInteractions(mapper);
+    }
+
+    @Test
+    @DisplayName("Should add course successfully")
+    void addCourse_ShouldCreateAndReturnCourse_WhenAuthorsExist() {
+        // Given
+        List<Author> authors = Arrays.asList(author);
+
+        when(mapper.toEntityForCreate(courseRequestDTO)).thenReturn(course);
+        when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(authors);
+        when(courseRepo.save(course)).thenReturn(course);
+        when(mapper.toResponseDTO(course)).thenReturn(courseResponseDTO);
+
+        // When
+        CourseResponseDTO result = courseService.addCourse(courseRequestDTO);
+
+        // Then
+        assertThat(result).isEqualTo(courseResponseDTO);
+        verify(mapper).toEntityForCreate(courseRequestDTO);
+        verify(authorRepo).findAllById(courseRequestDTO.getAuthorIds());
+        verify(courseRepo).save(course);
+        verify(mapper).toResponseDTO(course);
+    }
+
+    @Test
+    @DisplayName("Should throw AuthorNotFoundException when adding course with non-existent authors")
+    void addCourse_ShouldThrowException_WhenAuthorsDoNotExist() {
+        // Given
+        when(mapper.toEntityForCreate(courseRequestDTO)).thenReturn(course);
+        when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(List.of());
+
+        // When & Then
+        assertThatThrownBy(() -> courseService.addCourse(courseRequestDTO))
+                .isInstanceOf(AuthorNotFoundException.class)
+                .hasMessage("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
+
+        verify(mapper).toEntityForCreate(courseRequestDTO);
+        verify(authorRepo).findAllById(courseRequestDTO.getAuthorIds());
         verify(courseRepo, never()).save(any());
     }
 
-    //  deleteCourse Tests
     @Test
-    void deleteCourse_WhenCourseExists_ShouldDeleteSuccessfully() {
+    @DisplayName("Should update course successfully")
+    void updateCourse_ShouldUpdateAndReturnCourse_WhenCourseAndAuthorsExist() {
+        // Given
+        int courseId = 1;
+        List<Author> authors = Arrays.asList(author);
+
+        when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
+        doNothing().when(mapper).updateCourseFromDTO(courseRequestDTO, course);
+        when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(authors);
+        when(courseRepo.save(course)).thenReturn(course);
+        when(mapper.toResponseDTO(course)).thenReturn(courseResponseDTO);
+
+        // When
+        CourseResponseDTO result = courseService.updateCourse(courseId, courseRequestDTO);
+
+        // Then
+        assertThat(result).isEqualTo(courseResponseDTO);
+        verify(courseRepo).findById(courseId);
+        verify(mapper).updateCourseFromDTO(courseRequestDTO, course);
+        verify(authorRepo).findAllById(courseRequestDTO.getAuthorIds());
+        verify(courseRepo).save(course);
+        verify(mapper).toResponseDTO(course);
+    }
+
+    @Test
+    @DisplayName("Should throw CourseNotFoundException when updating non-existent course")
+    void updateCourse_ShouldThrowException_WhenCourseDoesNotExist() {
+        // Given
+        int courseId = 999;
+        when(courseRepo.findById(courseId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> courseService.updateCourse(courseId, courseRequestDTO))
+                .isInstanceOf(CourseNotFoundException.class)
+                .hasMessage("Course with ID: " + courseId + " not found");
+
+        verify(courseRepo).findById(courseId);
+        verifyNoInteractions(mapper);
+        verifyNoInteractions(authorRepo);
+    }
+
+    @Test
+    @DisplayName("Should throw AuthorNotFoundException when updating course with non-existent authors")
+    void updateCourse_ShouldThrowException_WhenAuthorsDoNotExist() {
+        // Given
+        int courseId = 1;
+        when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
+        doNothing().when(mapper).updateCourseFromDTO(courseRequestDTO, course);
+        when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(List.of());
+
+        // When & Then
+        assertThatThrownBy(() -> courseService.updateCourse(courseId, courseRequestDTO))
+                .isInstanceOf(AuthorNotFoundException.class)
+                .hasMessage("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
+
+        verify(courseRepo).findById(courseId);
+        verify(mapper).updateCourseFromDTO(courseRequestDTO, course);
+        verify(authorRepo).findAllById(courseRequestDTO.getAuthorIds());
+        verify(courseRepo, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should delete course successfully")
+    void deleteCourse_ShouldDeleteCourse_WhenCourseExists() {
         // Given
         int courseId = 1;
         when(courseRepo.existsById(courseId)).thenReturn(true);
@@ -258,24 +277,151 @@ class CourseServiceTest {
         courseService.deleteCourse(courseId);
 
         // Then
-        verify(courseRepo, times(1)).existsById(courseId);
-        verify(courseRepo, times(1)).deleteById(courseId);
+        verify(courseRepo).existsById(courseId);
+        verify(courseRepo).deleteById(courseId);
     }
 
     @Test
-    void deleteCourse_WhenCourseDoesNotExist_ShouldThrowCourseNotFoundException() {
+    @DisplayName("Should throw CourseNotFoundException when deleting non-existent course")
+    void deleteCourse_ShouldThrowException_WhenCourseDoesNotExist() {
         // Given
-        int nonExistentCourseId = 999;
-        when(courseRepo.existsById(nonExistentCourseId)).thenReturn(false);
+        int courseId = 999;
+        when(courseRepo.existsById(courseId)).thenReturn(false);
 
         // When & Then
-        CourseNotFoundException exception = assertThrows(
-                CourseNotFoundException.class,
-                () -> courseService.deleteCourse(nonExistentCourseId)
-        );
+        assertThatThrownBy(() -> courseService.deleteCourse(courseId))
+                .isInstanceOf(CourseNotFoundException.class)
+                .hasMessage("Course with ID: " + courseId + " not found");
 
-        assertEquals("Course with ID: " + nonExistentCourseId + " not found", exception.getMessage());
-        verify(courseRepo, times(1)).existsById(nonExistentCourseId);
+        verify(courseRepo).existsById(courseId);
         verify(courseRepo, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("Should return paginated courses successfully")
+    void getCoursesDTOPaginated_ShouldReturnPagedCourses() {
+        // Given
+        int page = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Course> coursePage = new PageImpl<>(Arrays.asList(course));
+        Page<CourseResponseDTO> expectedPage = new PageImpl<>(Arrays.asList(courseResponseDTO));
+
+        when(courseRepo.findAll(pageRequest)).thenReturn(coursePage);
+        when(mapper.toResponseDTO(course)).thenReturn(courseResponseDTO);
+
+        // When
+        Page<CourseResponseDTO> result = courseService.getCoursesDTOPaginated(page, size);
+
+        // Then
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0)).isEqualTo(courseResponseDTO);
+        verify(courseRepo).findAll(pageRequest);
+    }
+
+    @Test
+    @DisplayName("Should return courses by author email successfully")
+    void getCoursesDTOByAuthorEmail_ShouldReturnCourses_WhenEmailExists() {
+        // Given
+        String email = "john.doe@example.com";
+        List<Course> courses = Arrays.asList(course);
+
+        when(courseRepo.findByAuthorEmail(email)).thenReturn(courses);
+
+        // When
+        List<CourseResponseDTO> result = courseService.getCoursesDTOByAuthorEmail(email);
+
+        // Then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getName()).isEqualTo("Java Programming");
+        assertThat(result.get(0).getAuthorIds()).containsExactly(1);
+        verify(courseRepo).findByAuthorEmail(email);
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no courses found for author email")
+    void getCoursesDTOByAuthorEmail_ShouldReturnEmptyList_WhenNoCoursesFound() {
+        // Given
+        String email = "nonexistent@example.com";
+        when(courseRepo.findByAuthorEmail(email)).thenReturn(List.of());
+
+        // When
+        List<CourseResponseDTO> result = courseService.getCoursesDTOByAuthorEmail(email);
+
+        // Then
+        assertThat(result).isEmpty();
+        verify(courseRepo).findByAuthorEmail(email);
+    }
+
+    @Test
+    @DisplayName("Should handle multiple authors for a course")
+    void addCourse_ShouldHandleMultipleAuthors() {
+        // Given
+        Author author2 = new Author();
+        author2.setAuthorId(2);
+        author2.setAuthorName("Jane Smith");
+        author2.setAuthorEmail("jane.smith@example.com");
+
+        List<Integer> authorIds = Arrays.asList(1, 2);
+        List<Author> authors = Arrays.asList(author, author2);
+        Course mockCourse = mock(Course.class); // Create a mock Course
+
+        courseRequestDTO.setAuthorIds(authorIds);
+
+        when(mapper.toEntityForCreate(courseRequestDTO)).thenReturn(course);
+        when(authorRepo.findAllById(authorIds)).thenReturn(authors);
+        when(courseRepo.save(course)).thenReturn(course);
+        when(mapper.toResponseDTO(course)).thenReturn(courseResponseDTO);
+
+        // When
+        CourseResponseDTO result = courseService.addCourse(courseRequestDTO);
+
+        // Then
+        assertThat(result).isEqualTo(courseResponseDTO);
+        //verify(course).setAuthors(authors);
+        verify(mapper).toEntityForCreate(courseRequestDTO);
+        verify(authorRepo).findAllById(authorIds);
+        verify(courseRepo).save(course);
+        verify(mapper).toResponseDTO(course);
+    }
+
+    @Test
+    @DisplayName("Should handle null description gracefully")
+    void addCourse_ShouldHandleNullDescription() {
+        // Given
+        courseRequestDTO.setDescription(null);
+        List<Author> authors = Arrays.asList(author);
+
+        when(mapper.toEntityForCreate(courseRequestDTO)).thenReturn(course);
+        when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(authors);
+        when(courseRepo.save(course)).thenReturn(course);
+        when(mapper.toResponseDTO(course)).thenReturn(courseResponseDTO);
+
+        // When
+        CourseResponseDTO result = courseService.addCourse(courseRequestDTO);
+
+        // Then
+        assertThat(result).isNotNull();
+        verify(courseRepo).save(course);
+    }
+
+    @Test
+    @DisplayName("Should return empty page when no courses exist")
+    void getCoursesDTOPaginated_ShouldReturnEmptyPage_WhenNoCoursesExist() {
+        // Given
+        int page = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Course> emptyPage = new PageImpl<>(List.of());
+
+        when(courseRepo.findAll(pageRequest)).thenReturn(emptyPage);
+
+        // When
+        Page<CourseResponseDTO> result = courseService.getCoursesDTOPaginated(page, size);
+
+        // Then
+        assertThat(result.getContent()).isEmpty();
+        assertThat(result.getTotalElements()).isZero();
+        verify(courseRepo).findAll(pageRequest);
     }
 }
