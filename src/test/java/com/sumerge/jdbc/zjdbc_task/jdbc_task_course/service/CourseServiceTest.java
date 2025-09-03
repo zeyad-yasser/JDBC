@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -212,7 +213,7 @@ class CourseServiceTest {
         List<Author> authors = Arrays.asList(author);
 
         when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
-        doNothing().when(mapper).updateCourseFromDTO(courseRequestDTO, course);
+        doNothing().when(mapper).toEntityForUpdate(courseRequestDTO, course);
         when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(authors);
         when(courseRepo.save(course)).thenReturn(course);
         when(mapper.toResponseDTO(course)).thenReturn(courseResponseDTO);
@@ -223,7 +224,7 @@ class CourseServiceTest {
         // Then
         assertThat(result).isEqualTo(courseResponseDTO);
         verify(courseRepo).findById(courseId);
-        verify(mapper).updateCourseFromDTO(courseRequestDTO, course);
+        verify(mapper).toEntityForUpdate(courseRequestDTO, course);
         verify(authorRepo).findAllById(courseRequestDTO.getAuthorIds());
         verify(courseRepo).save(course);
         verify(mapper).toResponseDTO(course);
@@ -252,7 +253,7 @@ class CourseServiceTest {
         // Given
         int courseId = 1;
         when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
-        doNothing().when(mapper).updateCourseFromDTO(courseRequestDTO, course);
+        //doNothing().when(mapper).toEntityForUpdate(courseRequestDTO, course);
         when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(List.of());
 
         // When & Then
@@ -261,8 +262,11 @@ class CourseServiceTest {
                 .hasMessage("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
 
         verify(courseRepo).findById(courseId);
-        verify(mapper).updateCourseFromDTO(courseRequestDTO, course);
         verify(authorRepo).findAllById(courseRequestDTO.getAuthorIds());
+
+        //verify(mapper).toEntityForUpdate(courseRequestDTO, course);
+        // toEntityForUpdate should NOT be called because authors validation fails first
+        verifyNoInteractions(mapper);
         verify(courseRepo, never()).save(any());
     }
 
@@ -271,13 +275,13 @@ class CourseServiceTest {
     void deleteCourse_ShouldDeleteCourse_WhenCourseExists() {
         // Given
         int courseId = 1;
-        when(courseRepo.existsById(courseId)).thenReturn(true);
+        when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
 
         // When
         courseService.deleteCourse(courseId);
 
         // Then
-        verify(courseRepo).existsById(courseId);
+        verify(courseRepo).findById(courseId);
         verify(courseRepo).deleteById(courseId);
     }
 
@@ -286,14 +290,14 @@ class CourseServiceTest {
     void deleteCourse_ShouldThrowException_WhenCourseDoesNotExist() {
         // Given
         int courseId = 999;
-        when(courseRepo.existsById(courseId)).thenReturn(false);
+        when(courseRepo.findById(courseId)).thenReturn(Optional.empty());
 
         // When & Then
         assertThatThrownBy(() -> courseService.deleteCourse(courseId))
                 .isInstanceOf(CourseNotFoundException.class)
                 .hasMessage("Course with ID: " + courseId + " not found");
 
-        verify(courseRepo).existsById(courseId);
+        verify(courseRepo).findById(courseId);
         verify(courseRepo, never()).deleteById(any());
     }
 
@@ -363,15 +367,17 @@ class CourseServiceTest {
         author2.setAuthorEmail("jane.smith@example.com");
 
         List<Integer> authorIds = Arrays.asList(1, 2);
-        List<Author> authors = Arrays.asList(author, author2);
-        Course mockCourse = mock(Course.class); // Create a mock Course
+        List<Author> authors = new ArrayList<>(Arrays.asList(author, author2));
+
+        Course mockCourse = new Course(); // Create a mock Course
+        mockCourse.setAuthors(new ArrayList<>());
 
         courseRequestDTO.setAuthorIds(authorIds);
 
-        when(mapper.toEntityForCreate(courseRequestDTO)).thenReturn(course);
+        when(mapper.toEntityForCreate(courseRequestDTO)).thenReturn(mockCourse);
         when(authorRepo.findAllById(authorIds)).thenReturn(authors);
-        when(courseRepo.save(course)).thenReturn(course);
-        when(mapper.toResponseDTO(course)).thenReturn(courseResponseDTO);
+        when(courseRepo.save(mockCourse)).thenReturn(mockCourse);
+        when(mapper.toResponseDTO(mockCourse)).thenReturn(courseResponseDTO);
 
         // When
         CourseResponseDTO result = courseService.addCourse(courseRequestDTO);
@@ -381,8 +387,8 @@ class CourseServiceTest {
         //verify(course).setAuthors(authors);
         verify(mapper).toEntityForCreate(courseRequestDTO);
         verify(authorRepo).findAllById(authorIds);
-        verify(courseRepo).save(course);
-        verify(mapper).toResponseDTO(course);
+        verify(courseRepo).save(mockCourse);
+        verify(mapper).toResponseDTO(mockCourse);
     }
 
     @Test

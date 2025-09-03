@@ -12,32 +12,45 @@ import java.io.IOException;
 @Component
 public class ValidationHeaderFilter extends OncePerRequestFilter {
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    throws ServletException, IOException
     {
         String header = request.getHeader("x-validation-report");
         String path = request.getRequestURI();
-        // how to bypass GET requests in a OncePerRequestFilter
 
+        // how to bypass GET requests in a OncePerRequestFilter
         if ("GET".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
         }
-//        if ((path.startsWith("/courses/") || path.startsWith("/authors/"))&& request.getMethod().equals("GET"))
-//        {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") || path.startsWith("/swagger-ui.html")) {
+
+/*      if ((path.startsWith("/courses/") || path.startsWith("/authors/"))&& request.getMethod().equals("GET"))
+      {
+          filterChain.doFilter(request, response);
+          return;
+      }
+ */
+       // Allow login & register
+        if (path.startsWith("/api/auth/login") || path.startsWith("/api/auth/register"))
+        {
             filterChain.doFilter(request, response);
             return;
         }
 
+        // Allow API documentation endpoints
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") || path.startsWith("/swagger-ui.html"))
+        {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        // Block if header missing or invalid
         if(!"true".equalsIgnoreCase(header))
         {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("Missing or Invalid x-validation-report header");
             return;
         }
+        // Continue the Normal Filter Chain
         filterChain.doFilter(request, response);
     }
 }

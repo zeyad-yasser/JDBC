@@ -24,9 +24,7 @@ public class CourseResponseDTO {
 
     private List<Integer> authorIds;
 
-    public CourseResponseDTO() {
-        // Default constructor for testing and serialization
-    }
+    public CourseResponseDTO() {}
 
     public CourseResponseDTO(Integer id, String name, String description, int credit, List<Integer> authorIds) {
         this.id = id;

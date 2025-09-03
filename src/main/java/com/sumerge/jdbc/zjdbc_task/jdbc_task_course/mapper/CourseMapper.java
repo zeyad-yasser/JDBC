@@ -61,26 +61,20 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
 
-    // Convert Course → RequestDTO
-    @Mapping(target = "authorIds", expression = "java(mapAuthorsToIds(course.getAuthors()))")
-    CourseRequestDTO toRequestDTO(Course course);
-
-    // Convert RequestDTO → Course (for update)
-    Course toEntity(CourseRequestDTO dto);
-
     // Convert RequestDTO → Course (for create)
     @Mapping(target = "id", ignore = true)
     Course toEntityForCreate(CourseRequestDTO dto);
 
-    // Convert list of Courses → list of ResponseDTOs
-    List<CourseResponseDTO> toDTOList(List<Course> courses);
+    // Update existing Course entity from DTO
+    // Convert RequestDTO → Course (for Update)
+    void toEntityForUpdate(CourseRequestDTO dto, @MappingTarget Course course);
 
     // Convert Course → ResponseDTO
     @Mapping(target = "authorIds", expression = "java(mapAuthorsToIds(course.getAuthors()))")
     CourseResponseDTO toResponseDTO(Course course);
 
-    // Update existing Course entity from DTO
-    void updateCourseFromDTO(CourseRequestDTO dto, @MappingTarget Course course);
+    // Convert list of Courses → list of ResponseDTOs
+    List<CourseResponseDTO> toDTOList(List<Course> courses);
 
     //  Helper method to extract Author IDs
     default List<Integer> mapAuthorsToIds(List<Author> authors) {
@@ -89,5 +83,13 @@ public interface CourseMapper {
                         .map(Author::getAuthorId)
                         .collect(Collectors.toList());
     }
+
+    // Convert Course → RequestDTO
+    @Mapping(target = "authorIds", expression = "java(mapAuthorsToIds(course.getAuthors()))")
+    CourseRequestDTO toRequestDTO(Course course);
+
+    // Convert RequestDTO → Course (for update)
+    Course toEntity(CourseRequestDTO dto);
+
 }
 

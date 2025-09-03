@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.sumerge.jdbc.zjdbc_task.jdbc_task_course.repo")
 @EntityScan(basePackages = "com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity")
+@Profile("!test")
 public class JdbcTaskCourseApplication {
     public static void main(String[] args) {
         SpringApplication.run(JdbcTaskCourseApplication.class, args);

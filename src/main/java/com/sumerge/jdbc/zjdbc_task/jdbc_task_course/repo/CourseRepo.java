@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-//@RepositoryRestResource(path="zozos")
 public interface CourseRepo extends JpaRepository<Course, Integer> {
 
 
@@ -32,10 +31,9 @@ public interface CourseRepo extends JpaRepository<Course, Integer> {
 
 
        @Query(value = """
-    SELECT c FROM Course c JOIN c.authors a WHERE a.authorEmail = :email
-                               
-""")
-    List<Course> findByAuthorEmail(@Param("email") String email);
+               SELECT c FROM Course c JOIN c.authors a WHERE a.authorEmail = :email 
+               """)
+   List<Course> findByAuthorEmail(@Param("email") String email);
 
 
 }

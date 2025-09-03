@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,12 +40,13 @@ public class CourseService {
         Page<Course> page = courseRepo.findTopRatedCourses(PageRequest.of(0, 10));
         return page.getContent().stream()
                 .map(mapper::toDTO)
-                .toList();*/
+                .toList();
+        */
 
         List<Course> courses = courseRepo.findAll();
         return mapper.toDTOList(courses);  // <<< This Method From The Mapper
     /*
-          This is working well using "toDTOList" from Mapper
+          This is working well, using "toDTOList" from Mapper
           Returning List<Course> Without Using .toList(),
           Check If this what "Hussain" meant Or Not.
         &
@@ -93,7 +94,7 @@ public class CourseService {
         if (authors.isEmpty()){
             throw new AuthorNotFoundException("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
         }
-        mapper.updateCourseFromDTO(courseRequestDTO, existing);
+        mapper.toEntityForUpdate(courseRequestDTO, existing);
 
         existing.setAuthors(authors);
 
@@ -107,13 +108,17 @@ public class CourseService {
         Course course = courseRepo.findById(id)
                 .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
 
+        // Detach both sides of the ManyToMany using a defensive copy to avoid UnsupportedOperationException
+        List<Author> authorsCopy = new ArrayList<>(course.getAuthors());
         // Remove relationship from authors
-        for (Author author : course.getAuthors()) {
+        for (Author author : authorsCopy) {
             author.getCourses().remove(course);
         }
-        course.getAuthors().clear();
+        // Replace authors list with a fresh mutable list
+        course.setAuthors(new ArrayList<>());
 
-        courseRepo.delete(course);
+        // Delete by ID to align with unit test expectation
+        courseRepo.deleteById(id);
     }
 
     public Page<CourseResponseDTO> getCoursesDTOPaginated(int page, int size) {
