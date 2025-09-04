@@ -26,6 +26,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         // Here, you’re converting your own AppUser into Spring Security’s UserDetails object.
+        // I used "User.builder()" or I Could Make "AppUser Extends UserDetails."
+        // I Don't know which one is better.
         return User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword()) // Should be encoded!

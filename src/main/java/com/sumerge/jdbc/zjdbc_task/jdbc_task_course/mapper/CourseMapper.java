@@ -51,15 +51,14 @@ import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Author;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.entity.Course;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseRequestDTO;
 import com.sumerge.jdbc.zjdbc_task.jdbc_task_course.model.CourseResponseDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public interface CourseMapper {
+public interface CourseMapper
+{
 
     // Convert RequestDTO → Course (for create)
     @Mapping(target = "id", ignore = true)
@@ -70,14 +69,16 @@ public interface CourseMapper {
     void toEntityForUpdate(CourseRequestDTO dto, @MappingTarget Course course);
 
     // Convert Course → ResponseDTO
-    @Mapping(target = "authorIds", expression = "java(mapAuthorsToIds(course.getAuthors()))")
+    @Mapping(target = "authorIds", source = "authors", qualifiedByName= "mapAuthorsToIds")
     CourseResponseDTO toResponseDTO(Course course);
 
     // Convert list of Courses → list of ResponseDTOs
     List<CourseResponseDTO> toDTOList(List<Course> courses);
 
-    //  Helper method to extract Author IDs
-    default List<Integer> mapAuthorsToIds(List<Author> authors) {
+    //  Helper method to extract Author IDs O(n)
+    @Named("mapAuthorsToIds")
+    default List<Integer> mapAuthorsToIds(List<Author> authors)
+    {
         return authors == null ? null :
                 authors.stream()
                         .map(Author::getAuthorId)
@@ -85,7 +86,7 @@ public interface CourseMapper {
     }
 
     // Convert Course → RequestDTO
-    @Mapping(target = "authorIds", expression = "java(mapAuthorsToIds(course.getAuthors()))")
+    @Mapping(target = "authorIds",source = "authors",qualifiedByName = "mapAuthorsToIds")
     CourseRequestDTO toRequestDTO(Course course);
 
     // Convert RequestDTO → Course (for update)

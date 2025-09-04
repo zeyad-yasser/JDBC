@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,7 +53,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // I need to tell my AuthenticationManager to Authenticate the User by CustomUserDetailsService
+    // I need to tell my AuthenticationManager (DaoAuthProvider) to Authenticate the User by my CustomUserDetailsService, So to Use It.
     @Bean
     public AuthenticationManager authManager(HttpSecurity http,PasswordEncoder passwordEncoder) throws Exception {
 
@@ -61,7 +62,15 @@ public class SecurityConfig {
                 .passwordEncoder(passwordEncoder); // Use BCrypt here
         return builder.build();
     }
+    /*
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

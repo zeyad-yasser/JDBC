@@ -28,7 +28,8 @@ public class CourseService {
 
 
     @Autowired
-    public CourseService(CourseRepo courseRepo, CourseMapper mapper, AuthorRepo authorRepo) {
+    public CourseService(CourseRepo courseRepo, CourseMapper mapper, AuthorRepo authorRepo)
+    {
         this.courseRepo = courseRepo;
         this.mapper = mapper;
         this.authorRepo = authorRepo;
@@ -36,12 +37,7 @@ public class CourseService {
 
     public List<CourseResponseDTO> getRecommendedCourses()
     {
-        /*
-        Page<Course> page = courseRepo.findTopRatedCourses(PageRequest.of(0, 10));
-        return page.getContent().stream()
-                .map(mapper::toDTO)
-                .toList();
-        */
+
 
         List<Course> courses = courseRepo.findAll();
         return mapper.toDTOList(courses);  // <<< This Method From The Mapper
@@ -62,22 +58,29 @@ public class CourseService {
         return courseRepo.findById(id)
                 .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
     }
+
+
 // Here So, What is the difference between this and making one DTO, ....
 //          Contains ID and Ignore it at Creation / Requests
-    public CourseResponseDTO getCourseDTO(int id) {
+// Ask GPT about it, have a valid answer. if you got asked, Just Know the Answer.
+    public CourseResponseDTO getCourseDTO(int id)
+    {
         return courseRepo.findById(id)
                 .map(mapper::toResponseDTO).orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
     }
 
     @Transactional
-    public CourseResponseDTO addCourse(CourseRequestDTO courseRequestDTO) {
+    public CourseResponseDTO addCourse(CourseRequestDTO courseRequestDTO)
+    {
 
         Course course = mapper.toEntityForCreate(courseRequestDTO);
         List<Author> authors = authorRepo.findAllById(courseRequestDTO.getAuthorIds());
-       if(authors.isEmpty()) {
+       if(authors.isEmpty())
+       {
            throw new AuthorNotFoundException("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
        }
-        for (Author author : authors) {
+        for (Author author : authors)
+        {
             course.addAuthor(author);
         }
         Course saved = courseRepo.save(course);
@@ -85,14 +88,17 @@ public class CourseService {
     }
 
     @Transactional(rollbackFor = AuthorNotFoundException.class)
-    public CourseResponseDTO updateCourse(int id, CourseRequestDTO courseRequestDTO) {
+    public CourseResponseDTO updateCourse(int id, CourseRequestDTO courseRequestDTO)
+    {
 
         //look up @mappingtarget
         Course existing = courseRepo.findById(id).orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
 
         List<Author> authors = authorRepo.findAllById(courseRequestDTO.getAuthorIds());
-        if (authors.isEmpty()){
-            throw new AuthorNotFoundException("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
+        // Check that all authors at the RequestDTO exist in the database
+        if (authors.size() != courseRequestDTO.getAuthorIds().size())
+        {
+            throw new AuthorNotFoundException("Some of The Author Ids not found");
         }
         mapper.toEntityForUpdate(courseRequestDTO, existing);
 
@@ -104,14 +110,15 @@ public class CourseService {
     }
 
     @Transactional
-    public void deleteCourse(int id) {
-        Course course = courseRepo.findById(id)
-                .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
+    public void deleteCourse(int id)
+    {
+        Course course = courseRepo.findById(id).orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
 
         // Detach both sides of the ManyToMany using a defensive copy to avoid UnsupportedOperationException
         List<Author> authorsCopy = new ArrayList<>(course.getAuthors());
         // Remove relationship from authors
-        for (Author author : authorsCopy) {
+        for (Author author : authorsCopy)
+        {
             author.getCourses().remove(course);
         }
         // Replace authors list with a fresh mutable list
@@ -119,26 +126,21 @@ public class CourseService {
 
         // Delete by ID to align with unit test expectation
         courseRepo.deleteById(id);
+
     }
 
-    public Page<CourseResponseDTO> getCoursesDTOPaginated(int page, int size) {
+    public Page<CourseResponseDTO> getCoursesDTOPaginated(int page, int size)
+    {
         Page<Course> p = courseRepo.findAll(PageRequest.of(page, size));
         return p.map(mapper::toResponseDTO);
     }
 
-    public List<CourseResponseDTO> getCoursesDTOByAuthorEmail(String email) {
+    public List<CourseResponseDTO> getCoursesDTOByAuthorEmail(String email)
+    {
         List<Course> courses = courseRepo.findByAuthorEmail(email);
 
         return courses.stream()
-                .map(course -> new CourseResponseDTO(
-                        course.getId(),
-                        course.getName(),
-                        course.getDescription(),
-                        course.getCredit(),
-                        course.getAuthors().stream()
-                                .map(Author::getAuthorId)
-                                .toList()
-                ))
+                .map(mapper::toResponseDTO)
                 .toList();
     }
 }
