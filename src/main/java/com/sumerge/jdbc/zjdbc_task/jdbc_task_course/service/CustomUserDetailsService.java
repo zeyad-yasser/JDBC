@@ -27,7 +27,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // Here, you’re converting your own AppUser into Spring Security’s UserDetails object.
         // I used "User.builder()" or I Could Make "AppUser Extends UserDetails."
-        // I Don't know which one is better.
+        // Q: I Don't know which one is better!
+        // A: Mine is better for long-term, cleaner architecture, easier to maintain.
         return User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword()) // Should be encoded!

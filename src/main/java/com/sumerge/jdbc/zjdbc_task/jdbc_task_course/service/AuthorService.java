@@ -13,35 +13,41 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class AuthorService {
+public class AuthorService
+{
 
     private final AuthorRepo authorRepo;
     private final AuthorMapper authorMapper;
 
     @Autowired
-    public AuthorService(AuthorRepo authorRepo, AuthorMapper authorMapper) {
+    public AuthorService(AuthorRepo authorRepo, AuthorMapper authorMapper)
+    {
         this.authorRepo = authorRepo;
         this.authorMapper = authorMapper;
     }
 
-    public List<AuthorDTO> getAllAuthors() {
+    public List<AuthorDTO> getAllAuthors()
+    {
         return authorRepo.findAll().stream()
                 .map(authorMapper::toDto)
                 .toList();
     }
 
-    public AuthorDTO getAuthorById(int id) {
+    public AuthorDTO getAuthorById(int id)
+    {
         return authorRepo.findById(id)
                 .map(authorMapper::toDto)
                 .orElseThrow(() -> new AuthorNotFoundException("Author not found with id: " + id));
     }
 @Transactional
-    public AuthorDTO createAuthor(AuthorDTO dto) {
+    public AuthorDTO createAuthor(AuthorDTO dto)
+    {
         Author saved = authorRepo.save(authorMapper.toEntity(dto));
         return authorMapper.toDto(saved);
     }
 
-    public AuthorDTO updateAuthor(int id, AuthorDTO dto) {
+    public AuthorDTO updateAuthor(int id, AuthorDTO dto)
+    {
         Author existing = authorRepo.findById(id)
                 .orElseThrow(() -> new AuthorNotFoundException("Author not found with id: " + id));
         authorMapper.updateAuthorFromDto(dto, existing);
@@ -49,8 +55,10 @@ public class AuthorService {
         return authorMapper.toDto(updated);
     }
 
-    public void deleteAuthor(int id) {
-        if (!authorRepo.existsById(id)) {
+    public void deleteAuthor(int id)
+    {
+        if (!authorRepo.existsById(id))
+        {
             throw new AuthorNotFoundException("Author not found with id: " + id);
         }
         authorRepo.deleteById(id);

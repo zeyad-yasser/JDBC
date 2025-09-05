@@ -37,32 +37,12 @@ public class CourseService {
 
     public List<CourseResponseDTO> getRecommendedCourses()
     {
-
-
         List<Course> courses = courseRepo.findAll();
         return mapper.toDTOList(courses);  // <<< This Method From The Mapper
-    /*
-          This is working well, using "toDTOList" from Mapper
-          Returning List<Course> Without Using .toList(),
-          Check If this what "Hussain" meant Or Not.
-        &
-           - Which one is better Using it from the Mapper
-           or Say .toList() in the Service
-           List<Course> courses = courseRepo.findAll();
-           return mapper.toDTOList(courses);
-     */
-    }
-
-// This used only in Unit test: Replace it later " Ignore this, Not IN Production"
-    public Course viewCourse(int id) {
-        return courseRepo.findById(id)
-                .orElseThrow(() -> new CourseNotFoundException("Course with ID: " + id + " not found"));
     }
 
 
-// Here So, What is the difference between this and making one DTO, ....
-//          Contains ID and Ignore it at Creation / Requests
-// Ask GPT about it, have a valid answer. if you got asked, Just Know the Answer.
+
     public CourseResponseDTO getCourseDTO(int id)
     {
         return courseRepo.findById(id)
