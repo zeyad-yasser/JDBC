@@ -253,19 +253,40 @@ class CourseServiceTest {
         // Given
         int courseId = 1;
         when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
-        //doNothing().when(mapper).toEntityForUpdate(courseRequestDTO, course);
-        when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(List.of());
+        when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(List.of()); // Empty list - no authors found
 
         // When & Then
         assertThatThrownBy(() -> courseService.updateCourse(courseId, courseRequestDTO))
                 .isInstanceOf(AuthorNotFoundException.class)
-                .hasMessage("Author with ID: " + courseRequestDTO.getAuthorIds() + " not found");
+                .hasMessage("Some of The Author Ids not found"); // Match actual method message
 
         verify(courseRepo).findById(courseId);
         verify(authorRepo).findAllById(courseRequestDTO.getAuthorIds());
 
-        //verify(mapper).toEntityForUpdate(courseRequestDTO, course);
-        // toEntityForUpdate should NOT be called because authors validation fails first
+        // Verify mapper.toEntityForUpdate is NOT called because authors validation fails first
+        verifyNoInteractions(mapper);
+        verify(courseRepo, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should throw AuthorNotFoundException when updating course with partially non-existent authors")
+    void updateCourse_ShouldThrowException_WhenSomeAuthorsDoNotExist() {
+        // Given
+        int courseId = 1;
+        courseRequestDTO.setAuthorIds(Arrays.asList(1, 2, 999)); // 999 doesn't exist
+
+        List<Author> foundAuthors = Arrays.asList(author); // Only one author found, but 3 were requested
+
+        when(courseRepo.findById(courseId)).thenReturn(Optional.of(course));
+        when(authorRepo.findAllById(courseRequestDTO.getAuthorIds())).thenReturn(foundAuthors);
+
+        // When & Then
+        assertThatThrownBy(() -> courseService.updateCourse(courseId, courseRequestDTO))
+                .isInstanceOf(AuthorNotFoundException.class)
+                .hasMessage("Some of The Author Ids not found");
+
+        verify(courseRepo).findById(courseId);
+        verify(authorRepo).findAllById(courseRequestDTO.getAuthorIds());
         verifyNoInteractions(mapper);
         verify(courseRepo, never()).save(any());
     }
@@ -331,6 +352,7 @@ class CourseServiceTest {
         List<Course> courses = Arrays.asList(course);
 
         when(courseRepo.findByAuthorEmail(email)).thenReturn(courses);
+        when(mapper.toResponseDTO(course)).thenReturn(courseResponseDTO);
 
         // When
         List<CourseResponseDTO> result = courseService.getCoursesDTOByAuthorEmail(email);
@@ -339,7 +361,9 @@ class CourseServiceTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getName()).isEqualTo("Java Programming");
         assertThat(result.get(0).getAuthorIds()).containsExactly(1);
+
         verify(courseRepo).findByAuthorEmail(email);
+        verify(mapper).toResponseDTO(course);
     }
 
     @Test
